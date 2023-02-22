@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import { Button as VanButton } from 'vant'
 import { useUserStore } from '@/stores'
-import { instance } from './utils/request'
+import { instance, request } from './utils/request'
+import type { User } from './types/user'
 const userStore = useUserStore()
 const handleClick = async () => {
   // console.log('click', userStore.user)
-  const { data } = await instance.post(`/login/password`, {
+  // const { data } = await instance.post(`/login/password`, {
+  //   password: 'abc12345',
+  //   mobile: '13211112222'
+  // })
+  // userStore.setUser(data)
+  const { data } = await request<User>('/login/password', 'post', {
     password: 'abc12345',
     mobile: '13211112222'
   })
+  // console.log(data.id)
   userStore.setUser(data)
 }
 const handleGetUserInfo = async () => {

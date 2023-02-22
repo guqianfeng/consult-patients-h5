@@ -1,6 +1,6 @@
 import router from '@/router'
 import { useUserStore } from '@/stores'
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, type Method } from 'axios'
 import { showToast } from 'vant'
 
 const baseURL = 'https://consult-api.itheima.net/'
@@ -58,4 +58,28 @@ instance.interceptors.response.use(
   }
 )
 
-export { baseURL, instance }
+export type Data<T = any> = {
+  /**
+   * 正常返回10000，其他表示错误
+   */
+  code: number
+  data: T
+  /**
+   * 接口信息
+   */
+  message: string
+}
+
+const request = <T>(url: string, method: Method, submitData?: object) => {
+  return instance.request<T, Data<T>>({
+    url,
+    method,
+    [method === 'get' ? 'params' : 'data']: submitData
+  })
+}
+// async function fn() {
+//   const res = await request<{ a: number }>('', 'GET', { a: 1, b: 2 })
+//   res.data.a
+// }
+
+export { baseURL, instance, request }
