@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import { Button as VanButton } from 'vant'
+import { useUserStore } from '@/stores/user'
+const userStore = useUserStore()
+const handleClick = () => {
+  console.log('click', userStore.user)
+  userStore.setUser({
+    id: '1',
+    refreshToken: '1',
+    token: '1'
+  })
+}
 </script>
 
 <template>
@@ -8,8 +18,8 @@ import { Button as VanButton } from 'vant'
     <div class="box"></div>
     <div class="box"></div>
     <div class="box"></div>
-    <van-button type="primary">click</van-button>
-    <van-button>click</van-button>
+    <!-- <van-button type="primary">click</van-button> -->
+    <van-button @click="handleClick">login</van-button>
   </div>
 </template>
 
