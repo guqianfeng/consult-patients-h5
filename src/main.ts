@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
+// 导入根组件
 import App from './App.vue'
 import router from './router'
 
