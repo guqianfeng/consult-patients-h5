@@ -8,17 +8,23 @@ import { defineStore } from 'pinia'
  *   function => mutations actions
  * })
  */
-export const useUserStore = defineStore('cp-user', () => {
-  const user = ref<User>()
-  const setUser = (value: User) => {
-    user.value = value
+export const useUserStore = defineStore(
+  'cp-user',
+  () => {
+    const user = ref<User>()
+    const setUser = (value: User) => {
+      user.value = value
+    }
+    const delUser = () => {
+      user.value = undefined
+    }
+    return {
+      user,
+      setUser,
+      delUser
+    }
+  },
+  {
+    persist: true
   }
-  const delUser = () => {
-    user.value = undefined
-  }
-  return {
-    user,
-    setUser,
-    delUser
-  }
-})
+)
