@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { Button as VanButton } from 'vant'
 import { useUserStore } from '@/stores'
+import { instance } from './utils/request'
 const userStore = useUserStore()
-const handleClick = () => {
-  console.log('click', userStore.user)
-  userStore.setUser({
-    id: '1',
-    refreshToken: '1',
-    token: '1'
+const handleClick = async () => {
+  // console.log('click', userStore.user)
+  const { data } = await instance.post(`/login/password`, {
+    password: 'abc12345',
+    mobile: '13211112222'
   })
+  userStore.setUser(data)
+}
+const handleGetUserInfo = async () => {
+  const { data } = await instance.get('/patient/myUser')
+  console.log(data)
 }
 </script>
 
@@ -18,8 +23,10 @@ const handleClick = () => {
     <div class="box"></div>
     <div class="box"></div>
     <div class="box"></div>
-    <!-- <van-button type="primary">click</van-button> -->
     <van-button @click="handleClick">login</van-button>
+    <van-button type="primary" @click="handleGetUserInfo"
+      >获取个人信息</van-button
+    >
   </div>
 </template>
 
