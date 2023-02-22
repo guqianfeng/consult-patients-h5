@@ -8,6 +8,7 @@ import { Button as VanButton } from 'vant'
     <div class="box"></div>
     <div class="box"></div>
     <div class="box"></div>
+    <van-button type="primary">click</van-button>
     <van-button>click</van-button>
   </div>
 </template>
