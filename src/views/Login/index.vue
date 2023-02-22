@@ -1,7 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <router-view></router-view>
+  <div class="login-page">
+    <h1>login</h1>
+  </div>
 </template>
 
 <style scoped lang="scss"></style>
