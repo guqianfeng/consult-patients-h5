@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-// 测试eslint
+// 测试eslint haha
 import HelloWorld from './components/HelloWorld.vue'
 </script>
 
