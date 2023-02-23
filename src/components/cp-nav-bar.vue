@@ -1,4 +1,8 @@
 <script setup lang="ts">
+defineProps<{
+  title?: string
+  rightText?: string
+}>()
 const onClickLeft = () => {
   console.log('left')
 }
@@ -9,8 +13,8 @@ const onClickRight = () => {
 
 <template>
   <van-nav-bar
-    title="标题"
-    right-text="按钮"
+    :title="title"
+    :right-text="rightText"
     fixed
     left-arrow
     @click-left="onClickLeft"
