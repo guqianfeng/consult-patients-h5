@@ -1,10 +1,20 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+
 defineProps<{
   title?: string
   rightText?: string
 }>()
+const router = useRouter()
 const onClickLeft = () => {
   console.log('left')
+  console.log(history.state)
+  const back = history.state.back
+  if (back) {
+    router.back()
+  } else {
+    router.push('/')
+  }
 }
 const onClickRight = () => {
   console.log('right')
