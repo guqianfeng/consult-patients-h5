@@ -2,7 +2,8 @@
 
 <template>
   <div class="login-page">
-    <h1>login</h1>
+    <cp-nav-bar></cp-nav-bar>
+    <p v-for="item in 100" :key="item">帅峰</p>
   </div>
 </template>
 
