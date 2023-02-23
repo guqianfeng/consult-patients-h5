@@ -1,17 +1,29 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { mobileRules, passwordRules } from '@/utils/rules'
-import { showToast } from 'vant'
+import { showSuccessToast, showToast } from 'vant'
+import { loginByPassword } from '@/services/user'
+import { useUserStore } from '@/stores'
+import { useRoute, useRouter } from 'vue-router'
 
 const password = ref('')
 const mobile = ref('')
 const agree = ref(false)
 
-const onSubmit = () => {
+const userStore = useUserStore()
+const router = useRouter()
+const route = useRoute()
+
+const onSubmit = async () => {
   if (!agree.value) {
     return showToast('请先勾选已同意')
   }
-  console.log('submit', mobile.value, password.value)
+  // console.log('submit', mobile.value, password.value)
+  const { data } = await loginByPassword(mobile.value, password.value)
+  userStore.setUser(data)
+  const returnUrl = route.query.returnUrl
+  router.replace((returnUrl as string) || '/user')
+  showSuccessToast('登录成功')
 }
 </script>
 
