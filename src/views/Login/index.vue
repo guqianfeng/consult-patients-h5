@@ -11,7 +11,7 @@ const handleClickRight = () => {
       rightText="帅峰按钮"
       @click-right="handleClickRight"
     ></cp-nav-bar>
-    <p v-for="item in 100" :key="item">帅峰</p>
+    <van-button type="primary"></van-button>
   </div>
 </template>
 
