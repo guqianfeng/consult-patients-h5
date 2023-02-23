@@ -5,6 +5,9 @@ defineProps<{
   title?: string
   rightText?: string
 }>()
+const emit = defineEmits<{
+  (e: 'click-right'): void
+}>()
 const router = useRouter()
 const onClickLeft = () => {
   console.log('left')
@@ -18,6 +21,7 @@ const onClickLeft = () => {
 }
 const onClickRight = () => {
   console.log('right')
+  emit('click-right')
 }
 </script>
 
