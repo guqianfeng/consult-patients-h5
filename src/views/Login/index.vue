@@ -2,7 +2,7 @@
 import { onUnmounted, ref } from 'vue'
 import { codeRules, mobileRules, passwordRules } from '@/utils/rules'
 import { Toast, type FormInstance } from 'vant'
-import { loginByPassword, sendMobileCode } from '@/services/user'
+import { loginByMobile, loginByPassword, sendMobileCode } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -21,7 +21,9 @@ const onSubmit = async () => {
     return Toast('请先勾选已同意')
   }
   // console.log('submit', mobile.value, password.value)
-  const { data } = await loginByPassword(mobile.value, password.value)
+  const { data } = isPass.value
+    ? await loginByPassword(mobile.value, password.value)
+    : await loginByMobile(mobile.value, code.value)
   userStore.setUser(data)
   const returnUrl = route.query.returnUrl
   router.replace((returnUrl as string) || '/user')
@@ -36,7 +38,7 @@ const send = async () => {
   await form.value?.validate('mobile')
   await sendMobileCode(mobile.value, 'login')
   Toast.success('发送成功')
-  time.value = 6
+  time.value = 60
   timerId && window.clearInterval(timerId)
   timerId = window.setInterval(() => {
     time.value--
