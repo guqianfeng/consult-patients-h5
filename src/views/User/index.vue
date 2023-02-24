@@ -1,8 +1,8 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="layout-page">
-    <router-view></router-view>
+  <div class="user-page">
+    <h1>user</h1>
   </div>
 </template>
 

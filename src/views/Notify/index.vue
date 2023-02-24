@@ -1,8 +1,8 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="layout-page">
-    <router-view></router-view>
+  <div class="notify-page">
+    <h1>notify</h1>
   </div>
 </template>
 

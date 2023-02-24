@@ -9,7 +9,26 @@ const router = createRouter({
     },
     {
       path: '/',
-      component: () => import('@/views/Layout/index.vue')
+      component: () => import('@/views/Layout/index.vue'),
+      redirect: '/home',
+      children: [
+        {
+          path: 'home',
+          component: () => import('@/views/Home/index.vue')
+        },
+        {
+          path: 'article',
+          component: () => import('@/views/Article/index.vue')
+        },
+        {
+          path: 'notify',
+          component: () => import('@/views/Notify/index.vue')
+        },
+        {
+          path: 'user',
+          component: () => import('@/views/User/index.vue')
+        }
+      ]
     },
     {
       path: '/playground',
