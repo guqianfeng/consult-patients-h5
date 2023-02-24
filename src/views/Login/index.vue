@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import { codeRules, mobileRules, passwordRules } from '@/utils/rules'
-import { Toast } from 'vant'
-import { loginByPassword } from '@/services/user'
+import { Toast, type FormInstance } from 'vant'
+import { loginByPassword, sendMobileCode } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -27,6 +27,25 @@ const onSubmit = async () => {
   router.replace((returnUrl as string) || '/user')
   Toast.success('登录成功')
 }
+
+const time = ref(0)
+let timerId: number
+const form = ref<FormInstance>()
+const send = async () => {
+  if (time.value > 0) return
+  await form.value?.validate('mobile')
+  await sendMobileCode(mobile.value, 'login')
+  Toast.success('发送成功')
+  time.value = 6
+  timerId && window.clearInterval(timerId)
+  timerId = window.setInterval(() => {
+    time.value--
+    if (time.value <= 0) window.clearInterval(timerId)
+  }, 1000)
+}
+onUnmounted(() => {
+  window.clearInterval(timerId)
+})
 </script>
 
 <template>
@@ -44,9 +63,10 @@ const onSubmit = async () => {
       </a>
     </div>
     <!-- 表单 -->
-    <van-form autocomplete="off" @submit="onSubmit">
+    <van-form autocomplete="off" @submit="onSubmit" ref="form">
       <van-field
         v-model="mobile"
+        name="mobile"
         :rules="mobileRules"
         placeholder="请输入手机号"
         type="tel"
@@ -65,7 +85,9 @@ const onSubmit = async () => {
         :rules="codeRules"
       >
         <template #button>
-          <span class="btn-send">发送验证码</span>
+          <span class="btn-send" @click="send">{{
+            time > 0 ? `${time}s后再发送` : '请发送验证码'
+          }}</span>
         </template>
       </van-field>
       <div class="cp-cell">

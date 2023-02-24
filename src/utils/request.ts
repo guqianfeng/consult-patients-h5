@@ -74,7 +74,7 @@ const request = <T>(url: string, method: Method, submitData?: object) => {
   return instance.request<T, Data<T>>({
     url,
     method,
-    [method === 'get' ? 'params' : 'data']: submitData
+    [method.toLowerCase() === 'get' ? 'params' : 'data']: submitData
   })
 }
 // async function fn() {
