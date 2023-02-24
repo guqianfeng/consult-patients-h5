@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Button as VanButton } from 'vant'
 import { useUserStore } from '@/stores'
-import { instance, request } from './utils/request'
-import type { User } from './types/user'
+import { instance, request } from '../../utils/request'
+import type { User } from '../../types/user'
 const userStore = useUserStore()
 const handleClick = async () => {
   // console.log('click', userStore.user)
