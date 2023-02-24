@@ -1,4 +1,4 @@
-import type { CodeType, User } from './../types/user.d'
+import type { CodeType, User, UserInfo } from './../types/user.d'
 import { request } from '@/utils/request'
 
 /**
@@ -26,3 +26,6 @@ export const sendMobileCode = (mobile: string, type: CodeType) =>
 // 短信登录
 export const loginByMobile = (mobile: string, code: string) =>
   request<User>('/login', 'POST', { mobile, code })
+
+// 获取个人信息
+export const getUserInfo = () => request<UserInfo>('/patient/myUser')

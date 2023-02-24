@@ -70,7 +70,11 @@ export type Data<T = any> = {
   message: string
 }
 
-const request = <T>(url: string, method: Method, submitData?: object) => {
+const request = <T>(
+  url: string,
+  method: Method = 'get',
+  submitData?: object
+) => {
   return instance.request<T, Data<T>>({
     url,
     method,
