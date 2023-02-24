@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores'
 import { useRoute, useRouter } from 'vue-router'
 
 const isPass = ref(true)
+const show = ref(false)
 const password = ref('')
 const mobile = ref('')
 const code = ref('')
@@ -78,8 +79,15 @@ onUnmounted(() => {
         v-model="password"
         :rules="passwordRules"
         placeholder="请输入密码"
-        type="password"
-      ></van-field>
+        :type="show ? 'text' : 'password'"
+      >
+        <template #button>
+          <cp-icon
+            :name="`login-eye-${show ? 'on' : 'off'}`"
+            @click="show = !show"
+          ></cp-icon>
+        </template>
+      </van-field>
       <van-field
         v-else
         placeholder="短信验证码"
