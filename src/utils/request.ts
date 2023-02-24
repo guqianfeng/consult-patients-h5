@@ -1,7 +1,7 @@
 import router from '@/router'
 import { useUserStore } from '@/stores'
 import axios, { AxiosError, type Method } from 'axios'
-import { showToast } from 'vant'
+import { Toast } from 'vant'
 
 const baseURL = 'https://consult-api.itheima.net/'
 // 创建实例
@@ -35,7 +35,7 @@ instance.interceptors.response.use(
     const { code, message } = data
     // console.log(code, message)
     if (code !== 10000) {
-      showToast(message || '业务失败')
+      Toast(message || '业务失败')
       return Promise.reject(data)
     }
     return data

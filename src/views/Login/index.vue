@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { mobileRules, passwordRules } from '@/utils/rules'
-import { showSuccessToast, showToast } from 'vant'
+import { codeRules, mobileRules, passwordRules } from '@/utils/rules'
+import { Toast } from 'vant'
 import { loginByPassword } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { useRoute, useRouter } from 'vue-router'
 
+const isPass = ref(true)
 const password = ref('')
 const mobile = ref('')
+const code = ref('')
 const agree = ref(false)
 
 const userStore = useUserStore()
@@ -16,14 +18,14 @@ const route = useRoute()
 
 const onSubmit = async () => {
   if (!agree.value) {
-    return showToast('请先勾选已同意')
+    return Toast('请先勾选已同意')
   }
   // console.log('submit', mobile.value, password.value)
   const { data } = await loginByPassword(mobile.value, password.value)
   userStore.setUser(data)
   const returnUrl = route.query.returnUrl
   router.replace((returnUrl as string) || '/user')
-  showSuccessToast('登录成功')
+  Toast.success('登录成功')
 }
 </script>
 
@@ -35,9 +37,9 @@ const onSubmit = async () => {
     ></cp-nav-bar>
     <!-- 头部 -->
     <div class="login-head">
-      <h3>密码登录</h3>
-      <a href="javascript:;">
-        <span>短信验证码登录</span>
+      <h3>{{ isPass ? '密码登录' : '短信验证码登录' }}</h3>
+      <a href="javascript:;" @click="isPass = !isPass">
+        <span>{{ !isPass ? '密码登录' : '短信验证码登录' }}</span>
         <van-icon name="arrow"></van-icon>
       </a>
     </div>
@@ -50,11 +52,22 @@ const onSubmit = async () => {
         type="tel"
       ></van-field>
       <van-field
+        v-if="isPass"
         v-model="password"
         :rules="passwordRules"
         placeholder="请输入密码"
         type="password"
       ></van-field>
+      <van-field
+        v-else
+        placeholder="短信验证码"
+        v-model="code"
+        :rules="codeRules"
+      >
+        <template #button>
+          <span class="btn-send">发送验证码</span>
+        </template>
+      </van-field>
       <div class="cp-cell">
         <van-checkbox v-model="agree">
           <span>我已同意</span>
