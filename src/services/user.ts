@@ -1,4 +1,4 @@
-import type { CodeType, User, UserInfo } from './../types/user.d'
+import type { CodeType, PatientList, User, UserInfo } from './../types/user.d'
 import { request } from '@/utils/request'
 
 /**
@@ -29,3 +29,5 @@ export const loginByMobile = (mobile: string, code: string) =>
 
 // 获取个人信息
 export const getUserInfo = () => request<UserInfo>('/patient/myUser')
+
+export const getPatientList = () => request<PatientList>('/patient/mylist')
