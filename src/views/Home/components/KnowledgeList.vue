@@ -54,7 +54,11 @@ const onLoad = async () => {
       finished-text="没有更多了"
       @load="onLoad"
     >
-      <knowledge-card v-for="i in list" :key="i"></knowledge-card>
+      <knowledge-card
+        v-for="item in list"
+        :key="item.id"
+        :item="item"
+      ></knowledge-card>
     </van-list>
   </div>
 </template>
