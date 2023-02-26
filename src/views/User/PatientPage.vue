@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getPatientList, addPatient } from '@/services/user'
+import { getPatientList, addPatient, editPatient } from '@/services/user'
 import type { Patient, PatientList } from '@/types/user'
 import { idCardRules, nameRules } from '@/utils/rules'
 import { Dialog, Toast, type FormInstance } from 'vant'
@@ -18,8 +18,15 @@ const loadList = async () => {
   const res = await getPatientList()
   list.value = res.data
 }
-const showPopup = () => {
-  patient.value = { ...initalPatient }
+const showPopup = (item?: Patient) => {
+  // console.log(item)
+  if (item) {
+    // 修改
+    const { id, gender, name, idCard, defaultFlag } = item
+    patient.value = { id, gender, idCard, defaultFlag, name }
+  } else {
+    patient.value = { ...initalPatient }
+  }
   show.value = true
 }
 loadList()
@@ -64,11 +71,14 @@ const onSubmit = async () => {
    * 3. 成功提示
    * 4. 刷新列表
    */
-  await addPatient(patient.value)
+  patient.value.id
+    ? await editPatient(patient.value)
+    : await addPatient(patient.value)
   show.value = false
-  Toast.success('添加患者成功')
+  Toast.success('操作成功')
   loadList()
 }
+const showTitle = computed(() => (patient.value.id ? '编辑患者' : '添加患者'))
 </script>
 
 <template>
@@ -77,7 +87,7 @@ const onSubmit = async () => {
     <van-popup :show="show" @update:show="show = $event" position="right">
       <cp-nav-bar
         :back="() => (show = false)"
-        title="添加患者"
+        :title="showTitle"
         right-text="保存"
         @click-right="onSubmit"
       ></cp-nav-bar>
@@ -121,7 +131,9 @@ const onSubmit = async () => {
           <span>{{ item.genderValue }}</span>
           <span>{{ item.age }}岁</span>
         </div>
-        <div class="icon"><cp-icon name="user-edit" /></div>
+        <div class="icon" @click="showPopup(item)">
+          <cp-icon name="user-edit" />
+        </div>
         <div class="tag" v-if="item.defaultFlag === 1">默认</div>
       </div>
       <div class="patient-add" v-if="list.length < 6" @click="showPopup">
