@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { getPatientList } from '@/services/user'
-import type { PatientList } from '@/types/user'
-import { ref } from 'vue'
+import type { Patient, PatientList } from '@/types/user'
+import { computed, ref } from 'vue'
 
+const initalPatient: Patient = {
+  name: '',
+  idCard: '',
+  gender: 1,
+  defaultFlag: 0
+}
 // 1. 页面初始化加载数据
 const list = ref<PatientList>([])
 const show = ref(false)
@@ -11,6 +17,7 @@ const loadList = async () => {
   list.value = res.data
 }
 const showPopup = () => {
+  patient.value = { ...initalPatient }
   show.value = true
 }
 loadList()
@@ -25,6 +32,16 @@ const options = [
     value: 0
   }
 ]
+const patient = ref<Patient>({ ...initalPatient })
+const defaultFlag = computed({
+  get() {
+    return patient.value.defaultFlag === 1 ? true : false
+  },
+  set(value) {
+    // console.log(value)
+    patient.value.defaultFlag = value ? 1 : 0
+  }
+})
 </script>
 
 <template>
@@ -37,17 +54,28 @@ const options = [
         right-text="保存"
       ></cp-nav-bar>
       <van-form autocomplete="off" ref="form">
-        <van-field label="真实姓名" placeholder="请输入真实姓名" />
-        <van-field label="身份证号" placeholder="请输入身份证号" />
+        <van-field
+          label="真实姓名"
+          placeholder="请输入真实姓名"
+          v-model="patient.name"
+        />
+        <van-field
+          label="身份证号"
+          placeholder="请输入身份证号"
+          v-model="patient.idCard"
+        />
         <van-field label="性别" class="pb4">
           <!-- 单选按钮组件 -->
           <template #input>
-            <cp-radio-btn :options="options"></cp-radio-btn>
+            <cp-radio-btn
+              :options="options"
+              v-model="patient.gender"
+            ></cp-radio-btn>
           </template>
         </van-field>
         <van-field label="默认就诊人">
           <template #input>
-            <van-checkbox :icon-size="18" round />
+            <van-checkbox :icon-size="18" round v-model="defaultFlag" />
           </template>
         </van-field>
       </van-form>
