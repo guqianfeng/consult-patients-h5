@@ -1,4 +1,10 @@
-import type { CodeType, PatientList, User, UserInfo } from './../types/user.d'
+import type {
+  CodeType,
+  Patient,
+  PatientList,
+  User,
+  UserInfo
+} from './../types/user.d'
 import { request } from '@/utils/request'
 
 /**
@@ -31,3 +37,7 @@ export const loginByMobile = (mobile: string, code: string) =>
 export const getUserInfo = () => request<UserInfo>('/patient/myUser')
 
 export const getPatientList = () => request<PatientList>('/patient/mylist')
+
+// 添加患者信息
+export const addPatient = (patient: Patient) =>
+  request('/patient/add', 'POST', patient)

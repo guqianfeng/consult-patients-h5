@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { getPatientList } from '@/services/user'
+import { getPatientList, addPatient } from '@/services/user'
 import type { Patient, PatientList } from '@/types/user'
 import { idCardRules, nameRules } from '@/utils/rules'
-import { Dialog, type FormInstance } from 'vant'
+import { Dialog, Toast, type FormInstance } from 'vant'
 import { computed, ref } from 'vue'
 
 const initalPatient: Patient = {
@@ -57,6 +57,17 @@ const onSubmit = async () => {
     })
   }
   console.log('校验通过')
+  /**
+   * 添加患者
+   * 1. 调用请求
+   * 2. 关闭弹层
+   * 3. 成功提示
+   * 4. 刷新列表
+   */
+  await addPatient(patient.value)
+  show.value = false
+  Toast.success('添加患者成功')
+  loadList()
 }
 </script>
 
