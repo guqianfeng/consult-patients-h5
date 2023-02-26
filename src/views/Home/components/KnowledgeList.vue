@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import type { KnowledgeType } from '@/types/consult'
 import { ref } from 'vue'
 import KnowledgeCard from './KnowledgeCard.vue'
+
+defineProps<{
+  type: KnowledgeType
+}>()
+
 const list = ref<number[]>([])
 const loading = ref(false)
 const finished = ref(false)
