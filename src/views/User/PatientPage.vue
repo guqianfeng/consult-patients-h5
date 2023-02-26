@@ -5,15 +5,53 @@ import { ref } from 'vue'
 
 // 1. 页面初始化加载数据
 const list = ref<PatientList>([])
+const show = ref(false)
 const loadList = async () => {
   const res = await getPatientList()
   list.value = res.data
 }
+const showPopup = () => {
+  show.value = true
+}
 loadList()
+
+const options = [
+  {
+    label: '男',
+    value: 1
+  },
+  {
+    label: '女',
+    value: 0
+  }
+]
 </script>
 
 <template>
   <div class="patient-page">
+    <!-- <van-popup v-model:show="show" position="right" /> -->
+    <van-popup :show="show" @update:show="show = $event" position="right">
+      <cp-nav-bar
+        :back="() => (show = false)"
+        title="添加患者"
+        right-text="保存"
+      ></cp-nav-bar>
+      <van-form autocomplete="off" ref="form">
+        <van-field label="真实姓名" placeholder="请输入真实姓名" />
+        <van-field label="身份证号" placeholder="请输入身份证号" />
+        <van-field label="性别" class="pb4">
+          <!-- 单选按钮组件 -->
+          <template #input>
+            <cp-radio-btn :options="options"></cp-radio-btn>
+          </template>
+        </van-field>
+        <van-field label="默认就诊人">
+          <template #input>
+            <van-checkbox :icon-size="18" round />
+          </template>
+        </van-field>
+      </van-form>
+    </van-popup>
     <cp-nav-bar title="家庭档案"></cp-nav-bar>
     <div class="patient-list">
       <div class="patient-item" v-for="item in list" :key="item.id">
@@ -28,7 +66,7 @@ loadList()
         <div class="icon"><cp-icon name="user-edit" /></div>
         <div class="tag" v-if="item.defaultFlag === 1">默认</div>
       </div>
-      <div class="patient-add" v-if="list.length < 6">
+      <div class="patient-add" v-if="list.length < 6" @click="showPopup">
         <cp-icon name="user-add" />
         <p>添加患者</p>
       </div>
@@ -40,6 +78,14 @@ loadList()
 <style lang="scss" scoped>
 .patient-page {
   padding: 46px 0 80px;
+  :deep() {
+    .van-popup {
+      width: 100%;
+      height: 100%;
+      padding-top: 46px;
+      box-sizing: border-box;
+    }
+  }
 }
 .patient-list {
   padding: 15px;
