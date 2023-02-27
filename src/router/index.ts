@@ -48,6 +48,11 @@ const router = createRouter({
       meta: { title: '家庭档案' }
     },
     {
+      path: '/consult/fast',
+      component: () => import('@/views/Consult/ConsultFast.vue'),
+      meta: { title: '极速问诊' }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }
