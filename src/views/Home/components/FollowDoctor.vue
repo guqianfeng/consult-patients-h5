@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+// import { onMounted, onUnmounted, ref } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 import DoctorCard from './DoctorCard.vue'
 // 设备宽度
-const width = ref(0)
-const setWidth = () => (width.value = window.innerWidth)
-onMounted(() => {
-  window.addEventListener('resize', setWidth)
-  setWidth()
-})
-onUnmounted(() => {
-  window.removeEventListener('resize', setWidth)
-})
+// const width = ref(0)
+// const setWidth = () => (width.value = window.innerWidth)
+// onMounted(() => {
+//   window.addEventListener('resize', setWidth)
+//   setWidth()
+// })
+// onUnmounted(() => {
+//   window.removeEventListener('resize', setWidth)
+// })
 // setWidth()
+const { width } = useWindowSize()
 </script>
 
 <template>
