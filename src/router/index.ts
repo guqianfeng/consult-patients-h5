@@ -53,6 +53,11 @@ const router = createRouter({
       meta: { title: '极速问诊' }
     },
     {
+      path: '/consult/dep',
+      component: () => import('@/views/Consult/ConsultDep.vue'),
+      meta: { title: '选择科室' }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }
