@@ -1,5 +1,17 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import DoctorCard from './DoctorCard.vue'
+// 设备宽度
+const width = ref(0)
+const setWidth = () => (width.value = window.innerWidth)
+onMounted(() => {
+  window.addEventListener('resize', setWidth)
+  setWidth()
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', setWidth)
+})
+// setWidth()
 </script>
 
 <template>
@@ -15,7 +27,7 @@ import DoctorCard from './DoctorCard.vue'
         indicator-color="white"
         :loop="false"
         :showIndicators="false"
-        :width="150"
+        :width="(150 / 375) * width"
       >
         <van-swipe-item v-for="item in 5" :key="item">
           <doctor-card :item="item" />
