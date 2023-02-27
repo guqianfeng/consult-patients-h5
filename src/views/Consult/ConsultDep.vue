@@ -1,7 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { getAllDep } from '@/services/consult'
+import { useConsultStore } from '@/stores'
+import type { TopDep } from '@/types/consult'
+import { computed, onMounted, ref } from 'vue'
 
 const active = ref(0)
+const allDep = ref<TopDep[]>([])
+onMounted(async () => {
+  const { data } = await getAllDep()
+  allDep.value = data
+})
+const subDeps = computed(() => allDep.value[active.value].child)
+const consultStore = useConsultStore()
 </script>
 
 <template>
@@ -9,15 +19,20 @@ const active = ref(0)
     <cp-nav-bar title="选择科室" />
     <div class="wrapper">
       <van-sidebar v-model="active">
-        <van-sidebar-item title="内科" />
-        <van-sidebar-item title="外科" />
-        <van-sidebar-item title="皮肤科" />
-        <van-sidebar-item title="骨科" />
+        <van-sidebar-item
+          :title="item.name"
+          v-for="item in allDep"
+          :key="item.id"
+        />
       </van-sidebar>
       <div class="sub-dep">
-        <router-link to="/consult/illness">科室一</router-link>
-        <router-link to="/consult/illness">科室二</router-link>
-        <router-link to="/consult/illness">科室三</router-link>
+        <router-link
+          to="/consult/illness"
+          v-for="item in subDeps"
+          :key="item.id"
+          @click="consultStore.setDeptId(item.id)"
+          >{{ item.name }}</router-link
+        >
       </div>
     </div>
   </div>
