@@ -6,6 +6,7 @@ import type { ConsultOrderPreData } from '@/types/consult'
 import type { Patient } from '@/types/user'
 import { Toast } from 'vant'
 import { onMounted, ref } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const consultStore = useConsultStore()
 
@@ -48,6 +49,11 @@ const onSubmit = async () => {
   // 打开抽屉
   show.value = true
 }
+
+onBeforeRouteLeave(() => {
+  // console.log(orderId.value)
+  if (orderId.value) return false
+})
 </script>
 
 <template>
@@ -95,7 +101,11 @@ const onSubmit = async () => {
       :loading="loading"
     />
 
-    <van-action-sheet v-model:show="show" title="选择支付方式">
+    <van-action-sheet
+      v-model:show="show"
+      title="选择支付方式"
+      :close-on-popstate="false"
+    >
       <div class="pay-type">
         <p class="amount">￥20.00</p>
         <van-cell-group>
