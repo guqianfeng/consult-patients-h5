@@ -2,13 +2,13 @@
 import { IllnessTime } from '@/enums'
 import { uploadImage } from '@/services/consult'
 import { useConsultStore } from '@/stores'
-import type { ConsultIllness } from '@/types/consult'
-import { Toast } from 'vant'
+import type { ConsultIllness, Image } from '@/types/consult'
+import { Dialog, Toast } from 'vant'
 import type {
   UploaderAfterRead,
   UploaderFileListItem
 } from 'vant/lib/uploader/types'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const timeOptions = [
@@ -45,7 +45,7 @@ const form = ref<ConsultIllness>({
   consultFlag: undefined,
   pictures: []
 })
-const fileList = ref([])
+const fileList = ref<Image[]>([])
 const afterRead: UploaderAfterRead = async (file) => {
   // 此时可以自行将文件上传至服务器
   if (Array.isArray(file)) return
@@ -83,13 +83,32 @@ const disabled = computed(() => {
 const consultStore = useConsultStore()
 const router = useRouter()
 const next = () => {
+  // 校验提示
   if (!form.value.illnessDesc) return Toast.fail('病情描述不能为空')
   if (form.value.consultFlag === undefined)
     return Toast.fail('请选择是否就诊过')
   if (form.value.illnessTime === undefined) return Toast.fail('请选择患病时间')
+  // 数据存入pinia
   consultStore.setIllness(form.value)
+  // 跳转
   router.push('/user/patient?isChange=1')
 }
+
+onMounted(async () => {
+  // 从pinia中获取数据
+  const illnessDesc = consultStore.consult.illnessDesc
+  if (illnessDesc) {
+    await Dialog.confirm({
+      title: '温馨提示',
+      message: '是否恢复你之前填写的病情信息，是否继续？',
+      closeOnPopstate: false
+    })
+    const { illnessDesc, illnessTime, consultFlag, pictures } =
+      consultStore.consult
+    form.value = { illnessDesc, illnessTime, consultFlag, pictures }
+    fileList.value = pictures || []
+  }
+})
 </script>
 
 <template>
