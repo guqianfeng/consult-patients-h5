@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import router from '@/router'
 import { getConsultOrderPre, createConsultOrder } from '@/services/consult'
 import { getPatientDetail } from '@/services/user'
 import { useConsultStore } from '@/stores'
 import type { ConsultOrderPreData } from '@/types/consult'
 import type { Patient } from '@/types/user'
-import { Toast } from 'vant'
+import { Dialog, Toast } from 'vant'
 import { onMounted, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 
@@ -54,6 +55,25 @@ onBeforeRouteLeave(() => {
   // console.log(orderId.value)
   if (orderId.value) return false
 })
+
+const handleBeforeClose = () => {
+  return Dialog.confirm({
+    title: '提示',
+    message: '您还未支付，是否确认离开？',
+    cancelButtonText: '仍要关闭',
+    confirmButtonText: '继续支付'
+  })
+    .then(() => {
+      // 继续支付 - 不关闭
+      return false
+    })
+    .catch(() => {
+      // 关闭
+      orderId.value = ''
+      router.push('user/consult')
+      return true
+    })
+}
 </script>
 
 <template>
@@ -105,6 +125,8 @@ onBeforeRouteLeave(() => {
       v-model:show="show"
       title="选择支付方式"
       :close-on-popstate="false"
+      :closeable="false"
+      :before-close="handleBeforeClose"
     >
       <div class="pay-type">
         <p class="amount">￥20.00</p>
