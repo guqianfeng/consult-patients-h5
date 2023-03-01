@@ -29,7 +29,7 @@ export const useConsultStore = defineStore(
     // 设置优惠券
     const setCoupon = (id?: string) => (consult.value.couponId = id)
     // 清空记录
-    const remove = () => (consult.value = {})
+    const clear = () => (consult.value = {})
     return {
       consult,
       setType,
@@ -38,7 +38,7 @@ export const useConsultStore = defineStore(
       setIllness,
       setPatientId,
       setCoupon,
-      remove
+      clear
     }
   },
   {

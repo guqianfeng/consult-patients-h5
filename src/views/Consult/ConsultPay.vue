@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { getConsultOrderPre } from '@/services/consult'
+import { getConsultOrderPre, createConsultOrder } from '@/services/consult'
 import { getPatientDetail } from '@/services/user'
 import { useConsultStore } from '@/stores'
 import type { ConsultOrderPreData } from '@/types/consult'
 import type { Patient } from '@/types/user'
+import { Toast } from 'vant'
 import { onMounted, ref } from 'vue'
 
 const consultStore = useConsultStore()
@@ -31,6 +32,22 @@ onMounted(() => {
 })
 
 const agree = ref(false)
+const show = ref(false)
+const orderId = ref('')
+const loading = ref(false)
+const paymentMethod = ref<0 | 1>()
+const onSubmit = async () => {
+  if (!agree.value) return Toast.fail('请先同意支付协议')
+  loading.value = true
+  // 调用支付接口
+  const { data } = await createConsultOrder(consultStore.consult)
+  orderId.value = data.id
+  loading.value = false
+  // 清空store中的consult
+  consultStore.clear()
+  // 打开抽屉
+  show.value = true
+}
 </script>
 
 <template>
@@ -74,7 +91,32 @@ const agree = ref(false)
       :price="2900"
       button-text="立即支付"
       text-align="left"
+      @submit="onSubmit"
+      :loading="loading"
     />
+
+    <van-action-sheet v-model:show="show" title="选择支付方式">
+      <div class="pay-type">
+        <p class="amount">￥20.00</p>
+        <van-cell-group>
+          <van-cell title="微信支付" @click="paymentMethod = 0">
+            <template #icon><cp-icon name="consult-wechat" /></template>
+            <template #extra
+              ><van-checkbox :checked="paymentMethod === 0"
+            /></template>
+          </van-cell>
+          <van-cell title="支付宝支付" @click="paymentMethod = 1">
+            <template #icon><cp-icon name="consult-alipay" /></template>
+            <template #extra
+              ><van-checkbox :checked="paymentMethod === 1"
+            /></template>
+          </van-cell>
+        </van-cell-group>
+        <div class="btn">
+          <van-button type="primary" round block>立即支付</van-button>
+        </div>
+      </div>
+    </van-action-sheet>
   </div>
 </template>
 
