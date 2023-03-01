@@ -68,6 +68,14 @@ const router = createRouter({
       meta: { title: '问诊支付' }
     },
     {
+      path: '/room',
+      component: () => import('@/views/Room/index.vue'),
+      meta: { title: '问诊室' },
+      beforeEnter: (to) => {
+        if (to.query.payResult === 'false') return '/user/consult'
+      }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }

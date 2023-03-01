@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import router from '@/router'
-import { getConsultOrderPre, createConsultOrder } from '@/services/consult'
+import {
+  getConsultOrderPre,
+  createConsultOrder,
+  getConsultOrderPayUrl
+} from '@/services/consult'
 import { getPatientDetail } from '@/services/user'
 import { useConsultStore } from '@/stores'
 import type { ConsultOrderPreData } from '@/types/consult'
@@ -98,6 +102,21 @@ const handleBeforeClose = () => {
       return true
     })
 }
+
+const pay = async () => {
+  if (paymentMethod.value === undefined) return Toast.fail('请选择支付方式')
+  Toast.loading({
+    message: '跳转支付',
+    duration: 0
+  })
+  // 调用支付接口
+  const { data } = await getConsultOrderPayUrl({
+    orderId: orderId.value,
+    paymentMethod: paymentMethod.value,
+    payCallback: 'http://localhost:5173/room'
+  })
+  window.location.href = data.payUrl
+}
 </script>
 
 <template>
@@ -169,7 +188,9 @@ const handleBeforeClose = () => {
           </van-cell>
         </van-cell-group>
         <div class="btn">
-          <van-button type="primary" round block>立即支付</van-button>
+          <van-button type="primary" round block @click="pay"
+            >立即支付</van-button
+          >
         </div>
       </div>
     </van-action-sheet>
