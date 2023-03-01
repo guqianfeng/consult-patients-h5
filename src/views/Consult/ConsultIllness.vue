@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { IllnessTime } from '@/enums'
 import type { ConsultIllness } from '@/types/consult'
+import type {
+  UploaderAfterRead,
+  UploaderFileListItem
+} from 'vant/lib/uploader/types'
 import { ref } from 'vue'
 
 const timeOptions = [
@@ -32,6 +36,15 @@ const flagOptions = [
   }
 ]
 const form = ref<ConsultIllness>({})
+const fileList = ref([])
+const afterRead: UploaderAfterRead = (file) => {
+  // 此时可以自行将文件上传至服务器
+  console.log(file)
+}
+const onDelete = (file: UploaderFileListItem) => {
+  // 此时可以自行将文件从服务器删除
+  console.log(file)
+}
 </script>
 
 <template>
@@ -71,6 +84,23 @@ const form = ref<ConsultIllness>({})
           v-model="form.consultFlag"
           :options="flagOptions"
         ></cp-radio-btn>
+      </div>
+      <div class="illness-img">
+        <!-- 
+
+         -->
+        <van-uploader
+          upload-text="上传图片"
+          upload-icon="photo-o"
+          max-count="9"
+          :max-size="5 * 1024 * 1024"
+          :after-read="afterRead"
+          v-model="fileList"
+          @delete="onDelete"
+        ></van-uploader>
+        <p class="tip" v-if="fileList.length >= 9">
+          上传内容仅医生可见,最多9张图,最大5MB
+        </p>
       </div>
     </div>
   </div>
@@ -128,6 +158,43 @@ const form = ref<ConsultIllness>({})
     > p {
       color: var(--cp-text3);
       padding: 15px 0;
+    }
+  }
+  .illness-img {
+    padding-top: 16px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    .tip {
+      font-size: 12px;
+      color: var(--cp-tip);
+    }
+    ::v-deep() {
+      .van-uploader {
+        &__preview {
+          &-delete {
+            left: -6px;
+            top: -6px;
+            border-radius: 50%;
+            background-color: var(--cp-primary);
+            width: 20px;
+            height: 20px;
+            &-icon {
+              transform: scale(0.9) translate(-22%, 22%);
+            }
+          }
+          &-image {
+            border-radius: 8px;
+            overflow: hidden;
+          }
+        }
+        &__upload {
+          border-radius: 8px;
+        }
+        &__upload-icon {
+          color: var(--cp-text3);
+        }
+      }
     }
   }
 }
