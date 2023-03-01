@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { IllnessTime } from '@/enums'
 import { uploadImage } from '@/services/consult'
+import { useConsultStore } from '@/stores'
 import type { ConsultIllness } from '@/types/consult'
+import { Toast } from 'vant'
 import type {
   UploaderAfterRead,
   UploaderFileListItem
 } from 'vant/lib/uploader/types'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const timeOptions = [
   {
@@ -68,6 +71,25 @@ const onDelete = (file: UploaderFileListItem) => {
     (item) => item.url !== file.url
   )
 }
+
+const disabled = computed(() => {
+  return (
+    !form.value.illnessDesc ||
+    form.value.consultFlag === undefined ||
+    form.value.illnessTime === undefined
+  )
+})
+
+const consultStore = useConsultStore()
+const router = useRouter()
+const next = () => {
+  if (!form.value.illnessDesc) return Toast.fail('病情描述不能为空')
+  if (form.value.consultFlag === undefined)
+    return Toast.fail('请选择是否就诊过')
+  if (form.value.illnessTime === undefined) return Toast.fail('请选择患病时间')
+  consultStore.setIllness(form.value)
+  router.push('/user/patient?isChange=1')
+}
 </script>
 
 <template>
@@ -125,11 +147,25 @@ const onDelete = (file: UploaderFileListItem) => {
           上传内容仅医生可见,最多9张图,最大5MB
         </p>
       </div>
+      <van-button :class="{ disabled }" @click="next" type="primary" block round
+        >下一步</van-button
+      >
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.van-button {
+  font-size: 16px;
+  margin-bottom: 30px;
+  &.disabled {
+    opacity: 1;
+    background: #fafafa;
+    color: #d9dbde;
+    border: #fafafa;
+  }
+}
+
 .consult-illness-page {
   padding-top: 46px;
 }
