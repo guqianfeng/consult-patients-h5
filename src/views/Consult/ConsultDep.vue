@@ -10,7 +10,7 @@ onMounted(async () => {
   const { data } = await getAllDep()
   allDep.value = data
 })
-const subDeps = computed(() => allDep.value[active.value].child)
+const subDeps = computed(() => allDep.value[active.value]?.child)
 const consultStore = useConsultStore()
 </script>
 

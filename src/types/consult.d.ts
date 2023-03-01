@@ -147,3 +147,8 @@ export type SubDep = {
    */
   name: string
 }
+
+export type ConsultIllness = Pick<
+  PartialConsult,
+  'consultFlag' | 'illnessDesc' | 'illnessTime' | 'pictures'
+>
