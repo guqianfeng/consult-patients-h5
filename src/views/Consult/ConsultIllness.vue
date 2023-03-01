@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { IllnessTime } from '@/enums'
+import { uploadImage } from '@/services/consult'
 import type { ConsultIllness } from '@/types/consult'
 import type {
   UploaderAfterRead,
@@ -35,15 +36,37 @@ const flagOptions = [
     value: 0
   }
 ]
-const form = ref<ConsultIllness>({})
+const form = ref<ConsultIllness>({
+  illnessDesc: '',
+  illnessTime: undefined,
+  consultFlag: undefined,
+  pictures: []
+})
 const fileList = ref([])
-const afterRead: UploaderAfterRead = (file) => {
+const afterRead: UploaderAfterRead = async (file) => {
   // 此时可以自行将文件上传至服务器
-  console.log(file)
+  if (Array.isArray(file)) return
+  if (!file.file) return
+  console.log(file.file)
+  file.status = 'uploading'
+  file.message = '上传中...'
+  try {
+    const { data } = await uploadImage(file.file)
+    file.status = 'done'
+    file.message = '上传成功'
+    file.url = data.url
+    form.value.pictures?.push(data)
+  } catch (error) {
+    file.status = 'failed'
+    file.message = '上传失败'
+  }
 }
 const onDelete = (file: UploaderFileListItem) => {
   // 此时可以自行将文件从服务器删除
   console.log(file)
+  form.value.pictures = form.value.pictures?.filter(
+    (item) => item.url !== file.url
+  )
 }
 </script>
 

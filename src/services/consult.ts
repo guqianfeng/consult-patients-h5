@@ -4,7 +4,8 @@ import type {
   KnowledgePage,
   KnowledgeParams,
   PageParams,
-  TopDep
+  TopDep,
+  Image
 } from '@/types/consult'
 import { request } from '@/utils/request'
 
@@ -18,3 +19,9 @@ export const followOrUnfollow = (id: string, type: FollowType = 'doc') =>
   request('/like', 'POST', { id, type })
 
 export const getAllDep = () => request<TopDep[]>('/dep/all')
+
+export const uploadImage = (file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  return request<Image>('/upload', 'POST', formData)
+}
