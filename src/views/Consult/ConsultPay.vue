@@ -29,6 +29,30 @@ const loadPatient = async () => {
 }
 // mounted生命周期发送请求
 onMounted(() => {
+  type Key = keyof typeof consultStore.consult
+  const validKeys: Key[] = [
+    'type',
+    'illnessType',
+    'depId',
+    'illnessDesc',
+    'illnessTime',
+    'consultFlag',
+    'patientId'
+  ]
+  const valid = validKeys.every(
+    (key) => consultStore.consult[key] !== undefined
+  )
+  if (!valid) {
+    return Dialog({
+      title: '温馨提示',
+      message:
+        '问诊信息不完整请重新填写，如有未支付的问诊订单可在问诊记录中继续支付！',
+      closeOnPopstate: false
+    }).then(() => {
+      router.push('/')
+    })
+  }
+
   loadPayInfo()
   loadPatient()
 })
