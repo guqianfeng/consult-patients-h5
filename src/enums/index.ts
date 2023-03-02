@@ -18,3 +18,9 @@ export enum IllnessTime {
   /** 半年以上 */
   More
 }
+
+// 支付方式
+export enum PaymentMethod {
+  WeChatPay,
+  AliPay
+}

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PaymentMethod } from '@/enums'
 import router from '@/router'
 import {
   getConsultOrderPre,
@@ -65,7 +66,7 @@ const agree = ref(false)
 const show = ref(false)
 const orderId = ref('')
 const loading = ref(false)
-const paymentMethod = ref<0 | 1>()
+const paymentMethod = ref<PaymentMethod>()
 const onSubmit = async () => {
   if (!agree.value) return Toast.fail('请先同意支付协议')
   loading.value = true
@@ -174,16 +175,23 @@ const pay = async () => {
       <div class="pay-type">
         <p class="amount">￥20.00</p>
         <van-cell-group>
-          <van-cell title="微信支付" @click="paymentMethod = 0">
+          <van-cell
+            title="微信支付"
+            @click="paymentMethod = PaymentMethod.WeChatPay"
+          >
             <template #icon><cp-icon name="consult-wechat" /></template>
             <template #extra
-              ><van-checkbox :checked="paymentMethod === 0"
+              ><van-checkbox
+                :checked="paymentMethod === PaymentMethod.WeChatPay"
             /></template>
           </van-cell>
-          <van-cell title="支付宝支付" @click="paymentMethod = 1">
+          <van-cell
+            title="支付宝支付"
+            @click="paymentMethod = PaymentMethod.AliPay"
+          >
             <template #icon><cp-icon name="consult-alipay" /></template>
             <template #extra
-              ><van-checkbox :checked="paymentMethod === 1"
+              ><van-checkbox :checked="paymentMethod === PaymentMethod.AliPay"
             /></template>
           </van-cell>
         </van-cell-group>
