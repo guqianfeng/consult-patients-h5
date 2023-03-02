@@ -2,6 +2,37 @@
 import RoomStatus from './components/RoomStatus.vue'
 import RoomAction from './components/RoomAction.vue'
 import RoomMessage from './components/RoomMessage.vue'
+
+import { io, Socket } from 'socket.io-client'
+import { baseURL } from '@/utils/request'
+import { useUserStore } from '@/stores'
+import { useRoute } from 'vue-router'
+import { onMounted, onUnmounted } from 'vue'
+const userStore = useUserStore()
+const route = useRoute()
+let socket: Socket
+onMounted(() => {
+  socket = io(baseURL, {
+    auth: {
+      token: userStore.user?.token
+    },
+    query: {
+      orderId: route.query.orderId
+    }
+  })
+  socket.on('connect', () => {
+    console.log('connect')
+  })
+  socket.on('disconnect', (reason) => {
+    console.log('disconnect', reason)
+  })
+  socket.on('connect_error', (error) => {
+    console.log('connect_error', error)
+  })
+})
+onUnmounted(() => {
+  socket.disconnect()
+})
 </script>
 
 <template>
