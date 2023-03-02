@@ -1,46 +1,73 @@
 <script setup lang="ts">
+import { IllnessTime, MsgType } from '@/enums'
+import { flagOptions, timeOptions } from '@/services/constants'
+import type { Image } from '@/types/consult'
 import type { Message } from '@/types/room'
+import { ImagePreview } from 'vant'
 
 defineProps<{
   list: Message[]
 }>()
+
+const getIllnessTimeText = (val: IllnessTime) => {
+  return timeOptions.find((item) => item.value === val)?.label
+}
+const getConsultFlagText = (val: 0 | 1) => {
+  return flagOptions.find((item) => item.value === val)?.label
+}
+
+const previewImg = (pictures?: Image[]) => {
+  if (pictures && pictures.length) {
+    ImagePreview(pictures.map((item) => item.url))
+  }
+}
 </script>
 
 <template>
-  <!-- 患者卡片 -->
-  <div class="msg msg-illness">
-    <div class="patient van-hairline--bottom">
-      <p>李富贵 男 31岁</p>
-      <p>一周内 | 未去医院就诊</p>
+  <template v-for="{ msgType, msg, id } in list" :key="id">
+    <!-- 患者卡片 -->
+    <div class="msg msg-illness" v-if="msgType === MsgType.CardPat">
+      <div class="patient van-hairline--bottom">
+        <p>
+          {{ msg.consultRecord?.patientInfo.name }}
+          {{ msg.consultRecord?.patientInfo.genderValue }}
+          {{ msg.consultRecord?.patientInfo.age }}岁
+        </p>
+        <p>
+          {{ getIllnessTimeText(msg.consultRecord?.illnessTime!) }} |
+          {{ getConsultFlagText(msg.consultRecord?.consultFlag!) }}
+        </p>
+      </div>
+      <van-row>
+        <van-col span="6">病情描述</van-col>
+        <van-col span="18">{{ msg.consultRecord?.illnessDesc }}</van-col>
+        <van-col span="6">图片</van-col>
+        <van-col span="18" @click="previewImg(msg.consultRecord?.pictures)"
+          >点击查看</van-col
+        >
+      </van-row>
     </div>
-    <van-row>
-      <van-col span="6">病情描述</van-col>
-      <van-col span="18">头痛、头晕、恶心</van-col>
-      <van-col span="6">图片</van-col>
-      <van-col span="18">点击查看</van-col>
-    </van-row>
-  </div>
-  <!-- 通知-通用 -->
-  <div class="msg msg-tip">
-    <div class="content">
-      <span>医护人员正在赶来，请耐心等候</span>
+    <!-- 通知-通用 -->
+    <div class="msg msg-tip" v-if="msgType === MsgType.Notify">
+      <div class="content">
+        <span>{{ msg.content }}</span>
+      </div>
     </div>
-  </div>
-  <!-- 通知-温馨提示 -->
-  <div class="msg msg-tip">
-    <div class="content">
-      <span class="green">温馨提示：</span>
-      <span>在线咨询不能代替面诊，医护人员建议仅供参考</span>
+    <!-- 通知-温馨提示 -->
+    <div class="msg msg-tip" v-if="msgType === MsgType.NotifyTip">
+      <div class="content">
+        <span class="green">温馨提示：</span>
+        <span>{{ msg.content }}</span>
+      </div>
     </div>
-  </div>
-  <!-- 通知-结束 -->
-  <!-- <div class="msg msg-tip msg-tip-cancel">
+    <!-- 通知-结束 -->
+    <!-- <div class="msg msg-tip msg-tip-cancel">
     <div class="content">
       <span>订单取消</span>
     </div>
   </div> -->
-  <!-- 发送文字 -->
-  <!-- <div class="msg msg-to">
+    <!-- 发送文字 -->
+    <!-- <div class="msg msg-to">
     <div class="content">
       <div class="time">20:12</div>
       <div class="pao">大夫你好？</div>
@@ -49,8 +76,8 @@ defineProps<{
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
   </div> -->
-  <!-- 发送图片 -->
-  <!-- <div class="msg msg-to">
+    <!-- 发送图片 -->
+    <!-- <div class="msg msg-to">
     <div class="content">
       <div class="time">20:12</div>
       <van-image
@@ -62,8 +89,8 @@ defineProps<{
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
   </div> -->
-  <!-- 接收文字 -->
-  <!-- <div class="msg msg-from">
+    <!-- 接收文字 -->
+    <!-- <div class="msg msg-from">
     <van-image
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
@@ -72,8 +99,8 @@ defineProps<{
       <div class="pao">哪里不舒服</div>
     </div>
   </div> -->
-  <!-- 接收图片 -->
-  <!-- <div class="msg msg-from">
+    <!-- 接收图片 -->
+    <!-- <div class="msg msg-from">
     <van-image
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
@@ -85,8 +112,8 @@ defineProps<{
       />
     </div>
   </div> -->
-  <!-- 处方卡片 -->
-  <!-- <div class="msg msg-recipe">
+    <!-- 处方卡片 -->
+    <!-- <div class="msg msg-recipe">
     <div class="content">
       <div class="head van-hairline--bottom">
         <div class="head-tit">
@@ -108,7 +135,8 @@ defineProps<{
       <div class="foot"><span>购买药品</span></div>
     </div>
   </div> -->
-  <!-- 评价卡片，后期实现 -->
+    <!-- 评价卡片，后期实现 -->
+  </template>
 </template>
 
 <style lang="scss" scoped>
