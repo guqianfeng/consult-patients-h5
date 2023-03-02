@@ -8,10 +8,10 @@ import { useRoute, useRouter } from 'vue-router'
 
 const isPass = ref(true)
 const show = ref(false)
-const password = ref('')
-const mobile = ref('')
+const password = ref('abc12345')
+const mobile = ref('13211112222')
 const code = ref('')
-const agree = ref(false)
+const agree = ref(true)
 
 const userStore = useUserStore()
 const router = useRouter()

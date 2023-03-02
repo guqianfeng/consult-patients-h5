@@ -7,14 +7,17 @@ import { io, Socket } from 'socket.io-client'
 import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
+import type { Message, TimeMessages } from '@/types/room'
+import { MsgType } from '@/enums'
 const userStore = useUserStore()
 const route = useRoute()
 let socket: Socket
+const list = ref<Message[]>([])
 onMounted(() => {
   socket = io(baseURL, {
     auth: {
-      token: userStore.user?.token
+      token: `Bearer ${userStore.user?.token}`
     },
     query: {
       orderId: route.query.orderId
@@ -26,8 +29,21 @@ onMounted(() => {
   socket.on('disconnect', (reason) => {
     console.log('disconnect', reason)
   })
-  socket.on('connect_error', (error) => {
-    console.log('connect_error', error)
+  socket.on('chatMsgList', ({ data }: { data: TimeMessages[] }) => {
+    // console.log(data)
+    const arr: Message[] = []
+
+    data.forEach((item) => {
+      // console.log(tm.items)
+      arr.push({
+        createTime: item.createTime,
+        id: item.createTime,
+        msgType: MsgType.Notify,
+        msg: { content: item.createTime }
+      })
+      arr.push(...item.items)
+    })
+    list.value.unshift(...arr)
   })
 })
 onUnmounted(() => {
@@ -39,7 +55,7 @@ onUnmounted(() => {
   <div class="room-page">
     <cp-nav-bar title="医生问诊室"></cp-nav-bar>
     <room-status></room-status>
-    <room-message></room-message>
+    <room-message :list="list"></room-message>
     <room-action />
   </div>
 </template>

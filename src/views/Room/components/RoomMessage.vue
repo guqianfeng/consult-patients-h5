@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { Message } from '@/types/room'
+
+defineProps<{
+  list: Message[]
+}>()
+</script>
 
 <template>
   <!-- 患者卡片 -->
@@ -28,13 +34,13 @@
     </div>
   </div>
   <!-- 通知-结束 -->
-  <div class="msg msg-tip msg-tip-cancel">
+  <!-- <div class="msg msg-tip msg-tip-cancel">
     <div class="content">
       <span>订单取消</span>
     </div>
-  </div>
+  </div> -->
   <!-- 发送文字 -->
-  <div class="msg msg-to">
+  <!-- <div class="msg msg-to">
     <div class="content">
       <div class="time">20:12</div>
       <div class="pao">大夫你好？</div>
@@ -42,9 +48,9 @@
     <van-image
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
-  </div>
+  </div> -->
   <!-- 发送图片 -->
-  <div class="msg msg-to">
+  <!-- <div class="msg msg-to">
     <div class="content">
       <div class="time">20:12</div>
       <van-image
@@ -55,9 +61,9 @@
     <van-image
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
-  </div>
+  </div> -->
   <!-- 接收文字 -->
-  <div class="msg msg-from">
+  <!-- <div class="msg msg-from">
     <van-image
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
@@ -65,9 +71,9 @@
       <div class="time">20:12</div>
       <div class="pao">哪里不舒服</div>
     </div>
-  </div>
+  </div> -->
   <!-- 接收图片 -->
-  <div class="msg msg-from">
+  <!-- <div class="msg msg-from">
     <van-image
       src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
     />
@@ -78,9 +84,9 @@
         src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
       />
     </div>
-  </div>
+  </div> -->
   <!-- 处方卡片 -->
-  <div class="msg msg-recipe">
+  <!-- <div class="msg msg-recipe">
     <div class="content">
       <div class="head van-hairline--bottom">
         <div class="head-tit">
@@ -101,7 +107,7 @@
       </div>
       <div class="foot"><span>购买药品</span></div>
     </div>
-  </div>
+  </div> -->
   <!-- 评价卡片，后期实现 -->
 </template>
 
