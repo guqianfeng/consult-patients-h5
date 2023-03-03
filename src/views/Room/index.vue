@@ -7,7 +7,7 @@ import { io, Socket } from 'socket.io-client'
 import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import type { Message, TimeMessages } from '@/types/room'
 import { MsgType, OrderType } from '@/enums'
 import type { ConsultOrderItem } from '@/types/consult'
@@ -57,10 +57,27 @@ onMounted(() => {
     console.log('statusChange', data)
     loadConsultOrderItem()
   })
+  socket.on('receiveChatMsg', async (event) => {
+    console.log(event)
+    list.value.push(event)
+    await nextTick()
+    window.scrollTo(0, document.body.scrollHeight)
+  })
 })
 onUnmounted(() => {
   socket.disconnect()
 })
+
+const store = useUserStore()
+const sendText = (text: string) => {
+  console.log('儿子传给父亲的', text)
+  socket.emit('sendChatMsg', {
+    from: store.user?.id,
+    to: consultOrderItem.value?.docInfo?.id,
+    msgType: MsgType.MsgText,
+    msg: { content: text }
+  })
+}
 </script>
 
 <template>
@@ -72,6 +89,7 @@ onUnmounted(() => {
     ></room-status>
     <room-message :list="list"></room-message>
     <room-action
+      @send-text="sendText"
       :disabled="OrderType.ConsultChat !== consultOrderItem?.status"
     />
   </div>

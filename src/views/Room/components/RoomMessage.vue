@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IllnessTime, MsgType } from '@/enums'
 import { flagOptions, timeOptions } from '@/services/constants'
+import { useUserStore } from '@/stores'
 import type { Image } from '@/types/consult'
 import type { Message } from '@/types/room'
 import { ImagePreview } from 'vant'
@@ -21,10 +22,15 @@ const previewImg = (pictures?: Image[]) => {
     ImagePreview(pictures.map((item) => item.url))
   }
 }
+
+const userStore = useUserStore()
 </script>
 
 <template>
-  <template v-for="{ msgType, msg, id } in list" :key="id">
+  <template
+    v-for="{ msgType, msg, id, from, createTime, fromAvatar, toAvatar } in list"
+    :key="id"
+  >
     <!-- 患者卡片 -->
     <div class="msg msg-illness" v-if="msgType === MsgType.CardPat">
       <div class="patient van-hairline--bottom">
@@ -67,15 +73,16 @@ const previewImg = (pictures?: Image[]) => {
     </div>
   </div> -->
     <!-- 发送文字 -->
-    <!-- <div class="msg msg-to">
-    <div class="content">
-      <div class="time">20:12</div>
-      <div class="pao">大夫你好？</div>
+    <div
+      class="msg msg-to"
+      v-if="msgType === MsgType.MsgText && from === userStore.user?.id"
+    >
+      <div class="content">
+        <div class="time">{{ createTime }}</div>
+        <div class="pao">{{ msg.content }}</div>
+      </div>
+      <van-image :src="toAvatar" />
     </div>
-    <van-image
-      src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
-    />
-  </div> -->
     <!-- 发送图片 -->
     <!-- <div class="msg msg-to">
     <div class="content">
@@ -90,15 +97,16 @@ const previewImg = (pictures?: Image[]) => {
     />
   </div> -->
     <!-- 接收文字 -->
-    <!-- <div class="msg msg-from">
-    <van-image
-      src="https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/popular_3.jpg"
-    />
-    <div class="content">
-      <div class="time">20:12</div>
-      <div class="pao">哪里不舒服</div>
+    <div
+      class="msg msg-from"
+      v-if="msgType === MsgType.MsgText && from !== userStore.user?.id"
+    >
+      <van-image :src="fromAvatar" />
+      <div class="content">
+        <div class="time">{{ createTime }}</div>
+        <div class="pao">{{ msg.content }}</div>
+      </div>
     </div>
-  </div> -->
     <!-- 接收图片 -->
     <!-- <div class="msg msg-from">
     <van-image

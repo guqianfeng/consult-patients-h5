@@ -1,18 +1,34 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 const { disabled = true } = defineProps<{
   disabled?: boolean
 }>()
+
+const emit = defineEmits<{
+  (e: 'send-text', text: string): void
+}>()
+
+const text = ref('')
+
+const sendText = () => {
+  console.log('sendText', text.value)
+  emit('send-text', text.value)
+  text.value = ''
+}
 </script>
 
 <template>
   <div class="room-action">
     <van-field
       type="text"
+      v-model="text"
       class="input"
       :border="false"
       placeholder="问医生"
       autocomplete="off"
       :disabled="disabled"
+      @keyup.enter="sendText"
     ></van-field>
     <van-uploader :preview-image="false" :disabled="disabled">
       <cp-icon name="consult-img" />
