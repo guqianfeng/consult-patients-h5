@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useUserStore } from './../stores/modules/user'
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'

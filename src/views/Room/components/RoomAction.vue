@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { Image } from '@/types/consult'
+import type { UploaderAfterRead } from 'vant/lib/uploader/types'
+import { uploadImage } from '@/services/consult'
+import { Toast } from 'vant'
 
 const { disabled = true } = defineProps<{
   disabled?: boolean
@@ -7,6 +11,7 @@ const { disabled = true } = defineProps<{
 
 const emit = defineEmits<{
   (e: 'send-text', text: string): void
+  (e: 'send-image', img: Image): void
 }>()
 
 const text = ref('')
@@ -15,6 +20,15 @@ const sendText = () => {
   console.log('sendText', text.value)
   emit('send-text', text.value)
   text.value = ''
+}
+
+const sendImage: UploaderAfterRead = async (data) => {
+  if (Array.isArray(data)) return
+  if (!data.file) return
+  const t = Toast.loading('正在上传')
+  const res = await uploadImage(data.file)
+  t.clear()
+  emit('send-image', res.data)
 }
 </script>
 
@@ -30,7 +44,11 @@ const sendText = () => {
       :disabled="disabled"
       @keyup.enter="sendText"
     ></van-field>
-    <van-uploader :preview-image="false" :disabled="disabled">
+    <van-uploader
+      :preview-image="false"
+      :disabled="disabled"
+      :after-read="sendImage"
+    >
       <cp-icon name="consult-img" />
     </van-uploader>
   </div>

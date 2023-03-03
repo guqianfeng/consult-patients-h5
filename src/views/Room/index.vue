@@ -10,7 +10,7 @@ import { useRoute } from 'vue-router'
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import type { Message, TimeMessages } from '@/types/room'
 import { MsgType, OrderType } from '@/enums'
-import type { ConsultOrderItem } from '@/types/consult'
+import type { ConsultOrderItem, Image } from '@/types/consult'
 import { getConsultOrderDetail } from '@/services/consult'
 const userStore = useUserStore()
 const route = useRoute()
@@ -78,6 +78,15 @@ const sendText = (text: string) => {
     msg: { content: text }
   })
 }
+
+const sendImage = (img: Image) => {
+  socket.emit('sendChatMsg', {
+    from: store.user?.id,
+    to: consultOrderItem.value?.docInfo?.id,
+    msgType: MsgType.MsgImage,
+    msg: { picture: img }
+  })
+}
 </script>
 
 <template>
@@ -90,6 +99,7 @@ const sendText = (text: string) => {
     <room-message :list="list"></room-message>
     <room-action
       @send-text="sendText"
+      @send-image="sendImage"
       :disabled="OrderType.ConsultChat !== consultOrderItem?.status"
     />
   </div>
