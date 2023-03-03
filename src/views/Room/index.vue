@@ -64,6 +64,7 @@ onMounted(() => {
     }
     nextTick(() => {
       if (initialMsg.value) {
+        socket.emit('updateMsgStatus', arr[arr.length - 1].id)
         window.scrollTo(0, document.body.scrollHeight)
         initialMsg.value = false
       }
@@ -77,6 +78,7 @@ onMounted(() => {
     console.log(event)
     list.value.push(event)
     await nextTick()
+    socket.emit('updateMsgStatus', event.id)
     window.scrollTo(0, document.body.scrollHeight)
   })
 })
