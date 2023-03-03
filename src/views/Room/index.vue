@@ -12,15 +12,19 @@ import type { Message, TimeMessages } from '@/types/room'
 import { MsgType, OrderType } from '@/enums'
 import type { ConsultOrderItem, Image } from '@/types/consult'
 import { getConsultOrderDetail } from '@/services/consult'
+import { Toast } from 'vant'
+import dayjs from 'dayjs'
 const userStore = useUserStore()
 const route = useRoute()
 let socket: Socket
 const list = ref<Message[]>([])
 const consultOrderItem = ref<ConsultOrderItem>()
+const time = ref(dayjs().format('YYYY-MM-DD HH:mm:ss'))
 const loadConsultOrderItem = async () => {
   const { data } = await getConsultOrderDetail(route.query.orderId as string)
   consultOrderItem.value = data
 }
+const initialMsg = ref(true)
 onMounted(() => {
   loadConsultOrderItem()
   socket = io(baseURL, {
@@ -33,6 +37,7 @@ onMounted(() => {
   })
   socket.on('connect', () => {
     console.log('connect')
+    list.value = []
   })
   socket.on('disconnect', (reason) => {
     console.log('disconnect', reason)
@@ -41,8 +46,8 @@ onMounted(() => {
     // console.log(data)
     const arr: Message[] = []
 
-    data.forEach((item) => {
-      // console.log(tm.items)
+    data.forEach((item, i) => {
+      if (i === 0) time.value = item.createTime
       arr.push({
         createTime: item.createTime,
         id: item.createTime,
@@ -52,6 +57,17 @@ onMounted(() => {
       arr.push(...item.items)
     })
     list.value.unshift(...arr)
+    loading.value = false
+    // console.log(data)
+    if (!data.length) {
+      return Toast('没有历史消息了')
+    }
+    nextTick(() => {
+      if (initialMsg.value) {
+        window.scrollTo(0, document.body.scrollHeight)
+        initialMsg.value = false
+      }
+    })
   })
   socket.on('statusChange', (data) => {
     console.log('statusChange', data)
@@ -87,6 +103,11 @@ const sendImage = (img: Image) => {
     msg: { picture: img }
   })
 }
+
+const loading = ref(false)
+const onRefresh = () => {
+  socket.emit('getChatMsgList', 20, time.value, route.query.orderId)
+}
 </script>
 
 <template>
@@ -96,7 +117,10 @@ const sendImage = (img: Image) => {
       :status="consultOrderItem?.status"
       :countdown="consultOrderItem?.countdown"
     ></room-status>
-    <room-message :list="list"></room-message>
+    <van-pull-refresh v-model="loading" @refresh="onRefresh">
+      <room-message :list="list"></room-message>
+    </van-pull-refresh>
+
     <room-action
       @send-text="sendText"
       @send-image="sendImage"
