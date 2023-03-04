@@ -8,6 +8,7 @@ import { ImagePreview, Toast } from 'vant'
 import dayjs from 'dayjs'
 import { getPrescriptionPic } from '@/services/consult'
 import { useRouter } from 'vue-router'
+import EvaluateCard from './EvaluateCard.vue'
 
 defineProps<{
   list: Message[]
@@ -181,6 +182,12 @@ const buy = (prescription?: Prescription) => {
       </div>
     </div>
     <!-- 评价卡片，后期实现 -->
+    <div
+      class="msg msg-comment"
+      v-if="msgType === MsgType.CardEva || msgType === MsgType.CardEvaForm"
+    >
+      <evaluate-card :evaluateDoc="msg.evaluateDoc" />
+    </div>
   </template>
 </template>
 

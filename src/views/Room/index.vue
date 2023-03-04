@@ -7,7 +7,7 @@ import { io, Socket } from 'socket.io-client'
 import { baseURL } from '@/utils/request'
 import { useUserStore } from '@/stores'
 import { useRoute } from 'vue-router'
-import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, provide, ref } from 'vue'
 import type { Message, TimeMessages } from '@/types/room'
 import { MsgType, OrderType } from '@/enums'
 import type { ConsultOrderItem, Image } from '@/types/consult'
@@ -110,6 +110,8 @@ const loading = ref(false)
 const onRefresh = () => {
   socket.emit('getChatMsgList', 20, time.value, route.query.orderId)
 }
+
+provide('consultOrderItem', consultOrderItem)
 </script>
 
 <template>
