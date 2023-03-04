@@ -9,7 +9,9 @@ import type {
   ConsultOrderPreData,
   ConsultOrderPreParams,
   PartialConsult,
-  ConsultOrderItem
+  ConsultOrderItem,
+  ConsultOrderListParams,
+  ConsultOrderPage
 } from '@/types/consult'
 import { request } from '@/utils/request'
 
@@ -60,3 +62,6 @@ export const evaluateConsultOrder = (data: {
   content: string
   anonymousFlag: 0 | 1
 }) => request<{ id: string }>('/patient/order/evaluate', 'POST', data)
+
+export const getConsultOrderList = (params: ConsultOrderListParams) =>
+  request<ConsultOrderPage>('/patient/consult/order/list', 'GET', params)

@@ -77,6 +77,11 @@ const router = createRouter({
       }
     },
     {
+      path: '/user/consult',
+      component: () => import('@/views/User/ConsultPage.vue'),
+      meta: { title: '问诊记录' }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }
