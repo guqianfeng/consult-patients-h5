@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { IllnessTime, MsgType } from '@/enums'
+import { IllnessTime, MsgType, PrescriptionStatus } from '@/enums'
 import { flagOptions, timeOptions } from '@/services/constants'
 import { useUserStore } from '@/stores'
 import type { Image } from '@/types/consult'
-import type { Message } from '@/types/room'
-import { ImagePreview } from 'vant'
+import type { Message, Prescription } from '@/types/room'
+import { ImagePreview, Toast } from 'vant'
 import dayjs from 'dayjs'
 import { getPrescriptionPic } from '@/services/consult'
+import { useRouter } from 'vue-router'
 
 defineProps<{
   list: Message[]
@@ -34,6 +35,23 @@ const showPrescription = async (id?: string) => {
   if (id) {
     const { data } = await getPrescriptionPic(id)
     ImagePreview([data.url])
+  }
+}
+
+const router = useRouter()
+const buy = (prescription?: Prescription) => {
+  if (prescription) {
+    if (prescription.status === PrescriptionStatus.Invalid)
+      return Toast('处方失效')
+    if (
+      prescription.status === PrescriptionStatus.NotPayment &&
+      !prescription.orderId
+    ) {
+      // 没有订单id 去预支付页面 （拼接处方id）
+      return router.push('/order/pay?id=' + prescription.id)
+    }
+    // 有订单id，去订单详情页付款
+    return router.push(`/order/${prescription.orderId}`)
   }
 }
 </script>
@@ -157,7 +175,9 @@ const showPrescription = async (id?: string) => {
             <div class="num">x{{ item.quantity }}</div>
           </div>
         </div>
-        <div class="foot"><span>购买药品</span></div>
+        <div class="foot">
+          <span @click="buy(msg.prescription)">购买药品</span>
+        </div>
       </div>
     </div>
     <!-- 评价卡片，后期实现 -->
