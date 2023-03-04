@@ -3,6 +3,7 @@ import type { ConsultOrderItem } from '@/types/consult'
 import { OrderType } from '@/enums'
 import { Toast } from 'vant'
 import { ref } from 'vue'
+import { cancelOrder } from '@/services/consult'
 
 const props = defineProps<{ item: ConsultOrderItem }>()
 
@@ -14,6 +15,21 @@ const actions = [
   { text: '删除订单' }
 ]
 const onSelect = (action: { text: string }) => Toast(action.text)
+
+const loading = ref(false)
+const cancelConsultOrder = async (item: ConsultOrderItem) => {
+  loading.value = true
+  try {
+    await cancelOrder(item.id)
+    item.status = OrderType.ConsultCancel
+    item.statusValue = '已取消'
+    Toast.success('取消成功')
+  } catch (e) {
+    Toast.fail('取消失败')
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -45,7 +61,15 @@ const onSelect = (action: { text: string }) => Toast(action.text)
     </div>
     <!-- 待支付：取消问诊+去支付 -->
     <div class="foot" v-if="item.status === OrderType.ConsultPay">
-      <van-button class="gray" plain size="small" round>取消订单</van-button>
+      <van-button
+        class="gray"
+        plain
+        size="small"
+        round
+        :loading="loading"
+        @click="cancelConsultOrder(item)"
+        >取消订单</van-button
+      >
       <van-button
         type="primary"
         plain
@@ -57,7 +81,15 @@ const onSelect = (action: { text: string }) => Toast(action.text)
     </div>
     <!-- 待接诊：取消问诊+继续沟通 -->
     <div class="foot" v-if="item.status === OrderType.ConsultWait">
-      <van-button class="gray" plain size="small" round>取消订单</van-button>
+      <van-button
+        class="gray"
+        plain
+        size="small"
+        round
+        :loading="loading"
+        @click="cancelConsultOrder(item)"
+        >取消订单</van-button
+      >
       <van-button
         type="primary"
         plain
