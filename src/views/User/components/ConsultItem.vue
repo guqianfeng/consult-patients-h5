@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import type { ConsultOrderItem } from '@/types/consult'
 import { OrderType } from '@/enums'
+import { Toast } from 'vant'
+import { ref } from 'vue'
 
-defineProps<{ item: ConsultOrderItem }>()
+const props = defineProps<{ item: ConsultOrderItem }>()
+
+const showPopover = ref(false)
+
+// 通过 actions 属性来定义菜单选项
+const actions = [
+  { text: '查看处方', disabled: !props.item.prescriptionId },
+  { text: '删除订单' }
+]
+const onSelect = (action: { text: string }) => Toast(action.text)
 </script>
 
 <template>
@@ -77,6 +88,17 @@ defineProps<{ item: ConsultOrderItem }>()
     </div>
     <!-- 已完成：更多（查看处方，如果开了，删除订单）+问诊记录+（未评价?写评价:查看评价） -->
     <div class="foot" v-if="item.status === OrderType.ConsultComplete">
+      <div class="more">
+        <van-popover
+          v-model:show="showPopover"
+          :actions="actions"
+          @select="onSelect"
+          placement="top-start"
+        >
+          <template #reference> 更多 </template>
+        </van-popover>
+      </div>
+
       <van-button
         class="gray"
         plain
