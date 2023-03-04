@@ -14,6 +14,7 @@ const anonymousFlag = ref(false)
 const content = ref('')
 const disabled = computed(() => !score.value || !content.value)
 const consult = inject<Ref<ConsultOrderItem>>('consultOrderItem')
+const completeEva = inject<(score: number) => void>('completeEva')
 const submit = async () => {
   if (!score.value) return Toast('请填写内容')
   if (!content.value) return Toast('请填写评价内容')
@@ -26,6 +27,7 @@ const submit = async () => {
     anonymousFlag: anonymousFlag.value ? 1 : 0,
     content: content.value
   })
+  completeEva && completeEva(score.value)
 }
 </script>
 
@@ -34,7 +36,7 @@ const submit = async () => {
     <p class="title">医生服务评价</p>
     <p class="desc">我们会更加努力提升服务质量</p>
     <van-rate
-      :modelValue="3"
+      :modelValue="evaluateDoc.score"
       size="7vw"
       gutter="3vw"
       color="#FADB14"

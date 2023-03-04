@@ -98,11 +98,14 @@ const buy = (prescription?: Prescription) => {
       </div>
     </div>
     <!-- 通知-结束 -->
-    <!-- <div class="msg msg-tip msg-tip-cancel">
-    <div class="content">
-      <span>订单取消</span>
+    <div
+      v-if="msgType === MsgType.NotifyCancel"
+      class="msg msg-tip msg-tip-cancel"
+    >
+      <div class="content">
+        <span>{{ msg.content }}</span>
+      </div>
     </div>
-  </div> -->
     <!-- 发送文字 -->
     <div
       class="msg msg-to"

@@ -111,6 +111,14 @@ const onRefresh = () => {
   socket.emit('getChatMsgList', 20, time.value, route.query.orderId)
 }
 
+const completeEva = (score: number) => {
+  const item = list.value.find((item) => item.msgType === MsgType.CardEvaForm)
+  if (item) {
+    item.msg.evaluateDoc = { score }
+    item.msgType = MsgType.CardEva
+  }
+}
+provide('completeEva', completeEva)
 provide('consultOrderItem', consultOrderItem)
 </script>
 
