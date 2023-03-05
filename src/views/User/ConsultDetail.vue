@@ -33,6 +33,7 @@ const onCopy = () => {
 watch(copied, () => {
   if (copied.value) Toast('复制成功')
 })
+const show = ref(false)
 </script>
 
 <template>
@@ -118,7 +119,9 @@ watch(copied, () => {
         @click="cancelConsultOrder(item!)"
         >取消问诊</van-button
       >
-      <van-button type="primary" round>继续支付</van-button>
+      <van-button type="primary" round @click="show = true"
+        >继续支付</van-button
+      >
     </div>
     <div
       class="detail-action van-hairline--top"
@@ -176,6 +179,11 @@ watch(copied, () => {
       >
       <van-button type="primary" round to="/">咨询其他医生</van-button>
     </div>
+    <cp-pay-sheet
+      v-model:show="show"
+      :orderId="item.id"
+      :actual-payment="item.actualPayment"
+    ></cp-pay-sheet>
   </div>
   <div class="consult-detail-page" v-else>
     <cp-nav-bar title="问诊详情" />
