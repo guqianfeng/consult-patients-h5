@@ -1,19 +1,28 @@
 <script setup lang="ts">
-import { useCancelOrder } from '@/composable'
+import {
+  useCancelOrder,
+  useDeleteOrder,
+  useShowPrescription
+} from '@/composable'
 import { OrderType } from '@/enums'
 import { getConsultOrderDetail } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
 import { getConsultFlagText, getIllnessTimeText } from '@/utils/filter'
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const item = ref<ConsultOrderItem>()
 onMounted(async () => {
   const res = await getConsultOrderDetail(route.params.id as string)
   item.value = res.data
 })
 const { loading, cancelConsultOrder } = useCancelOrder()
+const { deleteLoading, deleteConsultOrder } = useDeleteOrder(() => {
+  router.push('/user/consult')
+})
+const { showPrescription } = useShowPrescription()
 </script>
 
 <template>
@@ -131,7 +140,11 @@ const { loading, cancelConsultOrder } = useCancelOrder()
       class="detail-action van-hairline--top"
       v-if="item.status === OrderType.ConsultComplete"
     >
-      <cp-consult-more></cp-consult-more>
+      <cp-consult-more
+        :disabled="!item.prescriptionId"
+        @on-delete="deleteConsultOrder(item!)"
+        @on-preview="showPrescription(item!.prescriptionId)"
+      ></cp-consult-more>
       <van-button type="default" round :to="`/room?orderId=${item.id}`"
         >问诊记录</van-button
       >
@@ -144,7 +157,13 @@ const { loading, cancelConsultOrder } = useCancelOrder()
       class="detail-action van-hairline--top"
       v-if="item.status === OrderType.ConsultCancel"
     >
-      <van-button type="default" round>删除订单</van-button>
+      <van-button
+        type="default"
+        round
+        :loading="deleteLoading"
+        @click="deleteConsultOrder(item!)"
+        >删除订单</van-button
+      >
       <van-button type="primary" round to="/">咨询其他医生</van-button>
     </div>
   </div>

@@ -1,6 +1,7 @@
 import { OrderType } from '@/enums'
 import {
   cancelOrder,
+  deleteOrder,
   followOrUnfollow,
   getPrescriptionPic
 } from '@/services/consult'
@@ -50,5 +51,25 @@ export function useCancelOrder() {
   return {
     loading,
     cancelConsultOrder
+  }
+}
+
+export function useDeleteOrder(cb: () => void) {
+  const deleteLoading = ref(false)
+  const deleteConsultOrder = async (item: ConsultOrderItem) => {
+    deleteLoading.value = true
+    try {
+      await deleteOrder(item.id)
+      cb && cb()
+      Toast.success('删除成功')
+    } catch (e) {
+      Toast.fail('删除失败')
+    } finally {
+      deleteLoading.value = false
+    }
+  }
+  return {
+    deleteLoading,
+    deleteConsultOrder
   }
 }
