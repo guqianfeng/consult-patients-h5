@@ -3,9 +3,12 @@ import type { ConsultOrderItem } from '@/types/consult'
 import { OrderType } from '@/enums'
 import { Toast } from 'vant'
 import { ref } from 'vue'
-import { cancelOrder } from '@/services/consult'
+import { cancelOrder, deleteOrder } from '@/services/consult'
 
 const props = defineProps<{ item: ConsultOrderItem }>()
+const emit = defineEmits<{
+  (e: 'on-delete', id: string): void
+}>()
 
 const showPopover = ref(false)
 
@@ -14,7 +17,12 @@ const actions = [
   { text: '查看处方', disabled: !props.item.prescriptionId },
   { text: '删除订单' }
 ]
-const onSelect = (action: { text: string }) => Toast(action.text)
+const onSelect = (action: { text: string }, index: number) => {
+  // console.log(index)
+  if (index === 1) {
+    deleteConsultOrder(props.item)
+  }
+}
 
 const loading = ref(false)
 const cancelConsultOrder = async (item: ConsultOrderItem) => {
@@ -28,6 +36,20 @@ const cancelConsultOrder = async (item: ConsultOrderItem) => {
     Toast.fail('取消失败')
   } finally {
     loading.value = false
+  }
+}
+
+const deleteLoading = ref(false)
+const deleteConsultOrder = async (item: ConsultOrderItem) => {
+  deleteLoading.value = true
+  try {
+    await deleteOrder(item.id)
+    emit('on-delete', item.id)
+    Toast.success('删除成功')
+  } catch (e) {
+    Toast.fail('删除失败')
+  } finally {
+    deleteLoading.value = false
   }
 }
 </script>
@@ -154,7 +176,15 @@ const cancelConsultOrder = async (item: ConsultOrderItem) => {
     </div>
     <!-- 已取消：删除订单+咨询其他医生 -->
     <div class="foot" v-if="item.status === OrderType.ConsultCancel">
-      <van-button class="gray" plain size="small" round>删除订单</van-button>
+      <van-button
+        class="gray"
+        plain
+        size="small"
+        round
+        @click="deleteConsultOrder(item)"
+        :loading="deleteLoading"
+        >删除订单</van-button
+      >
       <van-button type="primary" plain size="small" round to="/"
         >咨询其他医生</van-button
       >

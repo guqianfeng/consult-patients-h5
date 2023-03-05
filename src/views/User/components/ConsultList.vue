@@ -24,6 +24,10 @@ const onLoad = async () => {
   }
   loading.value = false
 }
+
+const handleDelete = (id: string) => {
+  list.value = list.value.filter((item) => item.id !== id)
+}
 </script>
 
 <template>
@@ -38,6 +42,7 @@ const onLoad = async () => {
         v-for="item in list"
         :key="item.id"
         :item="item"
+        @on-delete="handleDelete"
       ></consult-item>
     </van-list>
   </div>
