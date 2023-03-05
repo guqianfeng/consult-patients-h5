@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { IllnessTime, MsgType, PrescriptionStatus } from '@/enums'
-import { flagOptions, timeOptions } from '@/services/constants'
+import { MsgType, PrescriptionStatus } from '@/enums'
 import { useUserStore } from '@/stores'
 import type { Image } from '@/types/consult'
 import type { Message, Prescription } from '@/types/room'
@@ -9,17 +8,11 @@ import dayjs from 'dayjs'
 import { useRouter } from 'vue-router'
 import EvaluateCard from './EvaluateCard.vue'
 import { useShowPrescription } from '@/composable'
+import { getConsultFlagText, getIllnessTimeText } from '@/utils/filter'
 
 defineProps<{
   list: Message[]
 }>()
-
-const getIllnessTimeText = (val: IllnessTime) => {
-  return timeOptions.find((item) => item.value === val)?.label
-}
-const getConsultFlagText = (val: 0 | 1) => {
-  return flagOptions.find((item) => item.value === val)?.label
-}
 
 const previewImg = (pictures?: Image[]) => {
   if (pictures && pictures.length) {
