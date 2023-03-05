@@ -92,6 +92,12 @@ const router = createRouter({
       meta: { title: '药品支付' }
     },
     {
+      path: '/order/pay/result',
+      component: () => import('@/views/Order/OrderPayResult.vue'),
+      meta: { title: '药品支付结果' }
+    },
+
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }
