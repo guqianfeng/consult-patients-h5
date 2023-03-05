@@ -1,57 +1,48 @@
 <script setup lang="ts">
+import { useOrderDetail } from '@/composable'
+import { useRoute } from 'vue-router'
 import OrderMedical from './components/OrderMedical.vue'
+const route = useRoute()
+console.log(route.params.id)
+const { order } = useOrderDetail(route.params.id as string)
 </script>
 
 <template>
-  <div class="order-detail-page">
+  <div class="order-detail-page" v-if="order">
     <cp-nav-bar title="药品订单详情" />
     <div class="order-head">
-      <div class="card">
+      <div class="card" @click="$router.push(`/order/logistics/${order?.id}`)">
         <div class="logistics">
-          <p>【东莞市】您的包裹已由物流公司揽收</p>
-          <p>2019-07-14 17:42:12</p>
+          <p>{{ order.expressInfo?.content }}</p>
+          <p>{{ order.expressInfo?.time }}</p>
         </div>
         <van-icon name="arrow" />
       </div>
     </div>
-    <!-- OrderMedical组件 -->
-    <order-medical></order-medical>
+    <order-medical :medicines="order?.medicines" />
     <div class="order-detail">
       <van-cell-group>
-        <van-cell title="药品金额" value="￥50" />
-        <van-cell title="运费" value="￥4" />
-        <van-cell title="优惠券" value="-￥0" />
-        <van-cell title="实付款" value="￥54" class="price" />
-        <van-cell title="订单编号" value="202201127465" />
-        <van-cell title="创建时间" value="2022-01-23 09:23:46" />
-        <van-cell title="支付时间" value="2022-01-23 09:23:46" />
-        <van-cell title="支付方式" value="支付宝支付" />
+        <van-cell title="药品金额" :value="`￥${order.payment}`" />
+        <van-cell title="运费" :value="`￥${order.expressFee}`" />
+        <van-cell title="优惠券" :value="`-￥${order.couponDeduction}`" />
+        <van-cell
+          title="实付款"
+          :value="`￥${order.actualPayment}`"
+          class="price"
+        />
+        <van-cell title="订单编号" :value="order.orderNo" />
+        <van-cell title="创建时间" :value="order.createTime" />
+        <van-cell title="支付时间" :value="order.payTime" />
+        <van-cell
+          title="支付方式"
+          :value="order.paymentMethod === 0 ? '微信' : '支付宝'"
+        />
       </van-cell-group>
     </div>
-    <!-- 已取消 -->
-    <!-- <van-action-bar>
-      <van-action-bar-icon icon="delete-o" text="删除" />
-      <van-action-bar-button type="primary" text="沟通记录" />
-    </van-action-bar> -->
     <!-- 待收货 -->
     <van-action-bar>
       <van-action-bar-button type="primary" text="确认收货" />
     </van-action-bar>
-    <!-- 待发货 -->
-    <!-- <van-action-bar>
-      <van-action-bar-button type="primary" text="提醒发货" />
-    </van-action-bar> -->
-    <!-- 待支付 -->
-    <!-- <van-action-bar>
-      <p class="price">需要支付：<span>￥60</span></p>
-      <van-action-bar-button color="#bbb" text="取消问诊" />
-      <van-action-bar-button type="primary" text="继续支付" />
-    </van-action-bar> -->
-    <!-- 已完成 -->
-    <!-- <van-action-bar>
-      <van-action-bar-icon icon="delete-o" text="删除" />
-      <van-action-bar-button type="primary" text="再次购买" />
-    </van-action-bar> -->
   </div>
 </template>
 

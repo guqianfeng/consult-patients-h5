@@ -5,9 +5,11 @@ import {
   followOrUnfollow,
   getPrescriptionPic
 } from '@/services/consult'
+import { getMedicalOrderDetail } from '@/services/order'
 import type { ConsultOrderItem, FollowType } from '@/types/consult'
+import type { OrderDetail } from '@/types/order'
 import { ImagePreview, Toast } from 'vant'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 export const useFollow = (type: FollowType = 'doc') => {
   const loading = ref(false)
@@ -71,5 +73,16 @@ export function useDeleteOrder(cb: () => void) {
   return {
     deleteLoading,
     deleteConsultOrder
+  }
+}
+
+export function useOrderDetail(id: string) {
+  const order = ref<OrderDetail>()
+  onMounted(async () => {
+    const res = await getMedicalOrderDetail(id)
+    order.value = res.data
+  })
+  return {
+    order
   }
 }
