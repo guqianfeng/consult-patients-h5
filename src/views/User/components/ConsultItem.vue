@@ -6,28 +6,10 @@ import { ref } from 'vue'
 import { cancelOrder, deleteOrder } from '@/services/consult'
 import { useShowPrescription } from '@/composable'
 
-const props = defineProps<{ item: ConsultOrderItem }>()
+const { item } = defineProps<{ item: ConsultOrderItem }>()
 const emit = defineEmits<{
   (e: 'on-delete', id: string): void
 }>()
-
-const showPopover = ref(false)
-
-// 通过 actions 属性来定义菜单选项
-const actions = [
-  { text: '查看处方', disabled: !props.item.prescriptionId },
-  { text: '删除订单' }
-]
-const { showPrescription } = useShowPrescription()
-const onSelect = (action: { text: string }, index: number) => {
-  if (index === 0) {
-    showPrescription(props.item.prescriptionId)
-  }
-  // console.log(index)
-  if (index === 1) {
-    deleteConsultOrder(props.item)
-  }
-}
 
 const loading = ref(false)
 const cancelConsultOrder = async (item: ConsultOrderItem) => {
@@ -57,6 +39,8 @@ const deleteConsultOrder = async (item: ConsultOrderItem) => {
     deleteLoading.value = false
   }
 }
+
+const { showPrescription } = useShowPrescription()
 </script>
 
 <template>
@@ -147,17 +131,11 @@ const deleteConsultOrder = async (item: ConsultOrderItem) => {
     </div>
     <!-- 已完成：更多（查看处方，如果开了，删除订单）+问诊记录+（未评价?写评价:查看评价） -->
     <div class="foot" v-if="item.status === OrderType.ConsultComplete">
-      <div class="more">
-        <van-popover
-          v-model:show="showPopover"
-          :actions="actions"
-          @select="onSelect"
-          placement="top-start"
-        >
-          <template #reference> 更多 </template>
-        </van-popover>
-      </div>
-
+      <cp-consult-more
+        :disabled="!item.prescriptionId"
+        @on-delete="deleteConsultOrder(item)"
+        @on-preview="showPrescription(item.prescriptionId)"
+      ></cp-consult-more>
       <van-button
         class="gray"
         plain
