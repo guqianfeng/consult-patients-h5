@@ -86,7 +86,7 @@ const { showPrescription } = useShowPrescription()
         plain
         size="small"
         round
-        :to="`user/consult/${item.id}`"
+        :to="`/user/consult/${item.id}`"
         >去支付</van-button
       >
     </div>
