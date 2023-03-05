@@ -8,8 +8,10 @@ import { OrderType } from '@/enums'
 import { getConsultOrderDetail } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
 import { getConsultFlagText, getIllnessTimeText } from '@/utils/filter'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useClipboard } from '@vueuse/core'
+import { Toast } from 'vant'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,6 +25,14 @@ const { deleteLoading, deleteConsultOrder } = useDeleteOrder(() => {
   router.push('/user/consult')
 })
 const { showPrescription } = useShowPrescription()
+const { copy, copied, isSupported } = useClipboard()
+const onCopy = () => {
+  if (!isSupported) return Toast('不支持复制')
+  copy(item.value?.orderNo || '')
+}
+watch(copied, () => {
+  if (copied.value) Toast('复制成功')
+})
 </script>
 
 <template>
@@ -72,7 +82,7 @@ const { showPrescription } = useShowPrescription()
       <van-cell-group :border="false">
         <van-cell title="订单编号">
           <template #value>
-            <span class="copy">复制</span>
+            <span class="copy" @click="onCopy">复制</span>
             {{ item.orderNo }}
           </template>
         </van-cell>
