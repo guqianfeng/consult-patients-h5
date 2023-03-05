@@ -6,9 +6,9 @@ import type { Image } from '@/types/consult'
 import type { Message, Prescription } from '@/types/room'
 import { ImagePreview, Toast } from 'vant'
 import dayjs from 'dayjs'
-import { getPrescriptionPic } from '@/services/consult'
 import { useRouter } from 'vue-router'
 import EvaluateCard from './EvaluateCard.vue'
+import { useShowPrescription } from '@/composable'
 
 defineProps<{
   list: Message[]
@@ -32,12 +32,8 @@ const formatTime = (time: string) => {
 }
 
 const userStore = useUserStore()
-const showPrescription = async (id?: string) => {
-  if (id) {
-    const { data } = await getPrescriptionPic(id)
-    ImagePreview([data.url])
-  }
-}
+
+const { showPrescription } = useShowPrescription()
 
 const router = useRouter()
 const buy = (prescription?: Prescription) => {

@@ -4,6 +4,7 @@ import { OrderType } from '@/enums'
 import { Toast } from 'vant'
 import { ref } from 'vue'
 import { cancelOrder, deleteOrder } from '@/services/consult'
+import { useShowPrescription } from '@/composable'
 
 const props = defineProps<{ item: ConsultOrderItem }>()
 const emit = defineEmits<{
@@ -17,7 +18,11 @@ const actions = [
   { text: '查看处方', disabled: !props.item.prescriptionId },
   { text: '删除订单' }
 ]
+const { showPrescription } = useShowPrescription()
 const onSelect = (action: { text: string }, index: number) => {
+  if (index === 0) {
+    showPrescription(props.item.prescriptionId)
+  }
   // console.log(index)
   if (index === 1) {
     deleteConsultOrder(props.item)
