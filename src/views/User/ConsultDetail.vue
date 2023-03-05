@@ -183,6 +183,7 @@ const show = ref(false)
       v-model:show="show"
       :orderId="item.id"
       :actual-payment="item.actualPayment"
+      payCallback="http://localhost:5173/room"
     ></cp-pay-sheet>
   </div>
   <div class="consult-detail-page" v-else>

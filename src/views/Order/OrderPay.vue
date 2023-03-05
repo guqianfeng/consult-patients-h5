@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { getAddressList, getMedicalOrderPre } from '@/services/order'
+import {
+  createMedicalOrder,
+  getAddressList,
+  getMedicalOrderPre
+} from '@/services/order'
 import type { AddressItem, OrderPre } from '@/types/order'
+import { Toast } from 'vant'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -20,6 +25,37 @@ onMounted(async () => {
     else address.value = addRes.data[0]
   }
 })
+
+// 生成订单
+const agree = ref(false)
+const loading = ref(false)
+const orderId = ref('')
+const submit = async () => {
+  if (!agree.value) return Toast('请同意支付协议')
+  if (!address.value?.id) return Toast('请选择收货地址')
+  if (!orderPre.value?.id) return Toast('未找到处方')
+  // 没有生成订单ID
+  if (!orderId.value) {
+    loading.value = true
+    try {
+      const res = await createMedicalOrder({
+        id: orderPre.value?.id,
+        addressId: address.value?.id,
+        couponId: orderPre.value.couponId
+      })
+      orderId.value = res.data.id
+      loading.value = false
+      // 打开支付抽屉
+      show.value = true
+    } catch (e) {
+      loading.value = false
+    }
+  } else {
+    show.value = true
+  }
+}
+// 控制抽屉和弹窗
+const show = ref(false)
 </script>
 
 <template>
@@ -78,14 +114,24 @@ onMounted(async () => {
         由于药品的特殊性，如非错发、漏发药品的情况，药品一经发出
         不得退换，请核对药品信息无误后下单。
       </p>
-      <van-checkbox>我已同意<a href="javascript:;">支付协议</a></van-checkbox>
+      <van-checkbox v-model="agree"
+        >我已同意<a href="javascript:;">支付协议</a></van-checkbox
+      >
     </div>
     <van-submit-bar
       :price="orderPre.actualPayment * 100"
       button-text="立即支付"
       button-type="primary"
       text-align="left"
+      :loading="loading"
+      @click="submit"
     ></van-submit-bar>
+    <cp-pay-sheet
+      v-model:show="show"
+      :orderId="orderId"
+      :actual-payment="orderPre.actualPayment"
+      pay-callback="http://localhost:5173/order/pay/result"
+    ></cp-pay-sheet>
   </div>
   <div class="order-pay-page" v-else>
     <cp-nav-bar title="药品支付" />
