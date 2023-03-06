@@ -121,7 +121,11 @@ onUnmounted(() => {
     <div class="login-other">
       <van-divider>第三方登录</van-divider>
       <div class="icon">
-        <img src="@/assets/qq.svg" alt="" />
+        <a
+          href="https://graph.qq.com/oauth2.0/authorize?client_id=102015968&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fconsult-patients.itheima.net%2Flogin%2Fcallback"
+        >
+          <img src="@/assets/qq.svg" alt="" />
+        </a>
       </div>
     </div>
   </div>
