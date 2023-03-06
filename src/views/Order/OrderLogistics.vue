@@ -5,13 +5,17 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import { shallowRef } from 'vue'
+import endImg from '@/assets/end.png'
+import startImg from '@/assets/start.png'
+import carImg from '@/assets/car.png'
+
 // key  安全密钥
 // 60f5c92bc188e6227cfc5ee74a22d41a	9864bad37366fa776a6687f2486cf2cf
 window._AMapSecurityConfig = {
   securityJsCode: '9864bad37366fa776a6687f2486cf2cf'
 }
 
-const map = shallowRef(null)
+const map = shallowRef()
 
 const initMap = () => {
   AMapLoader.load({
@@ -20,12 +24,73 @@ const initMap = () => {
     plugins: [''] // 需要使用的的插件列表，如比例尺'AMap.Scale'等
   })
     .then((AMap) => {
+      // 初始化地图开始
       map.value = new AMap.Map('map', {
         //设置地图容器id
         // viewMode: '3D', //是否为3D地图模式
         zoom: 12, //初始化地图级别
         // center: [105.602725, 37.076636] //初始化地图中心点位置
         mapStyle: 'amap://styles/whitesmoke'
+      })
+      // 路线规划
+      AMap.plugin('AMap.Driving', function () {
+        var driving = new AMap.Driving({
+          map: map.value,
+          // 驾车路线规划策略，AMap.DrivingPolicy.LEAST_TIME是最快捷模式
+          policy: AMap.DrivingPolicy.LEAST_TIME,
+          showTraffic: false,
+          hideMarkers: true
+        })
+
+        const start = logistics.value?.logisticsInfo.shift()
+        const end = logistics.value?.logisticsInfo.pop()
+        // 开始的经纬度
+        var startLngLat = [start?.longitude, start?.latitude]
+        // 结束的经纬度
+        var endLngLat = [end?.longitude, end?.latitude]
+
+        var startMarker = new AMap.Marker({
+          position: startLngLat,
+          icon: startImg,
+          anchor: 'bottom-center'
+        })
+        map.value?.add(startMarker)
+
+        var endMarker = new AMap.Marker({
+          position: endLngLat,
+          icon: endImg,
+          anchor: 'bottom-center'
+        })
+        map.value?.add(endMarker)
+
+        driving.search(
+          startLngLat,
+          endLngLat,
+          {
+            waypoints: logistics.value?.logisticsInfo.map((item) => {
+              return [item.longitude, item.latitude]
+            })
+          },
+          function (status: 'complete' | 'error' | 'no_data', result: object) {
+            // 未出错时，result即是对应的路线规划方案
+            // console.log(status, result)
+            if (status === 'complete') {
+              var carMarker = new AMap.Marker({
+                position: [
+                  logistics.value?.currentLocationInfo.longitude,
+                  logistics.value?.currentLocationInfo.latitude
+                ],
+                icon: carImg,
+                anchor: 'center'
+              })
+              map.value?.add(carMarker)
+              setTimeout(() => {
+                map.value.setFitView([carMarker])
+                map.value.setZoom(20)
+              }, 3000)
+            }
+          }
+        )
       })
     })
     .catch((e) => {
