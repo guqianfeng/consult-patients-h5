@@ -3,6 +3,35 @@ import { getMedicalOrderLogistics } from '@/services/order'
 import type { Logistics } from '@/types/order'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import AMapLoader from '@amap/amap-jsapi-loader'
+import { shallowRef } from 'vue'
+// key  安全密钥
+// 60f5c92bc188e6227cfc5ee74a22d41a	9864bad37366fa776a6687f2486cf2cf
+window._AMapSecurityConfig = {
+  securityJsCode: '9864bad37366fa776a6687f2486cf2cf'
+}
+
+const map = shallowRef(null)
+
+const initMap = () => {
+  AMapLoader.load({
+    key: '60f5c92bc188e6227cfc5ee74a22d41a', // 申请好的Web端开发者Key，首次调用 load 时必填
+    version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
+    plugins: [''] // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+  })
+    .then((AMap) => {
+      map.value = new AMap.Map('map', {
+        //设置地图容器id
+        // viewMode: '3D', //是否为3D地图模式
+        zoom: 12, //初始化地图级别
+        // center: [105.602725, 37.076636] //初始化地图中心点位置
+        mapStyle: 'amap://styles/whitesmoke'
+      })
+    })
+    .catch((e) => {
+      console.log(e)
+    })
+}
 
 // 获取物流信息
 const logistics = ref<Logistics>()
@@ -10,6 +39,7 @@ const route = useRoute()
 onMounted(async () => {
   const res = await getMedicalOrderLogistics(route.params.id as string)
   logistics.value = res.data
+  initMap()
 })
 </script>
 
