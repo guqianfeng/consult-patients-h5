@@ -5,6 +5,7 @@ const props = defineProps<{
   title?: string
   rightText?: string
   back?: () => void
+  placeholder?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'click-right'): void
@@ -31,6 +32,7 @@ const onClickRight = () => {
 
 <template>
   <van-nav-bar
+    :placeholder="placeholder"
     :title="title"
     :right-text="rightText"
     fixed

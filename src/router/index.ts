@@ -107,6 +107,11 @@ const router = createRouter({
       meta: { title: '物流详情' }
     },
     {
+      path: '/login/callback',
+      component: () => import('@/views/Login/LoginCallback.vue'),
+      meta: { title: 'QQ登录-绑定手机' }
+    },
+    {
       path: '/playground',
       component: () => import('@/views/Playground/index.vue')
     }
@@ -116,7 +121,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   NProgress.start()
   const userStore = useUserStore()
-  const whiteList = ['/login']
+  const whiteList = ['/login', '/login/callback']
   // 没有登录且去的不是白名单 则去登录页
   if (!userStore.user?.token && !whiteList.includes(to.path)) return '/login'
 })

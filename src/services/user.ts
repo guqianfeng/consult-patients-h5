@@ -53,3 +53,7 @@ export const delPatient = (id: string) =>
 // 查询患者详情
 export const getPatientDetail = (id: string) =>
   request<Patient>(`/patient/info/${id}`)
+
+// 用qq登录
+export const loginByQQ = (openId: string) =>
+  request<User>('/login/thirdparty', 'POST', { openId, source: 'qq' })
