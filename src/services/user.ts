@@ -57,3 +57,9 @@ export const getPatientDetail = (id: string) =>
 // 用qq登录
 export const loginByQQ = (openId: string) =>
   request<User>('/login/thirdparty', 'POST', { openId, source: 'qq' })
+
+export const bindMobile = (data: {
+  mobile: string
+  code: string
+  openId: string
+}) => request<User>('/login/binding', 'POST', data)

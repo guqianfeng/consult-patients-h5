@@ -106,6 +106,11 @@ const { time, form, send } = useSendMobileCode(mobile)
       <van-divider>第三方登录</van-divider>
       <div class="icon">
         <a
+          @click="
+            userStore.setReturnUrl(
+              ($route.query.returnUrl as string) || '/user'
+            )
+          "
           href="https://graph.qq.com/oauth2.0/authorize?client_id=102015968&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fconsult-patients.itheima.net%2Flogin%2Fcallback"
         >
           <img src="@/assets/qq.svg" alt="" />

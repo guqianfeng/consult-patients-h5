@@ -12,16 +12,22 @@ export const useUserStore = defineStore(
   'cp-user',
   () => {
     const user = ref<User>()
+    const returnUrl = ref('')
     const setUser = (value: User) => {
       user.value = value
     }
     const delUser = () => {
       user.value = undefined
     }
+    const setReturnUrl = (value: string) => {
+      returnUrl.value = value
+    }
     return {
       user,
       setUser,
-      delUser
+      delUser,
+      returnUrl,
+      setReturnUrl
     }
   },
   {

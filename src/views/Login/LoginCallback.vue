@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { useSendMobileCode } from '@/composable'
-import { loginByQQ } from '@/services/user'
+import { bindMobile, loginByQQ } from '@/services/user'
+import { useUserStore } from '@/stores'
+import type { User } from '@/types/user'
 import { codeRules, mobileRules } from '@/utils/rules'
+import { Toast } from 'vant'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const openIdRef = ref('')
 /**
@@ -23,9 +27,10 @@ onMounted(() => {
       openIdRef.value = openId
       // 调用请求
       loginByQQ(openId)
-        .then((res) => {
+        .then(({ data }) => {
           // 登录成功
-          console.log(res)
+          console.log(data)
+          loginSuccess(data)
         })
         .catch((err) => {
           // 登录失败
@@ -37,7 +42,28 @@ onMounted(() => {
 })
 const mobile = ref('')
 const code = ref('')
-const bind = () => {}
+const bind = async () => {
+  const { data } = await bindMobile({
+    mobile: mobile.value,
+    code: code.value,
+    openId: openIdRef.value
+  })
+  loginSuccess(data)
+}
+const userStore = useUserStore()
+const router = useRouter()
+const loginSuccess = (data: User) => {
+  // 登录成功
+  /**
+   * 存pinia（持久化）
+   * 跳转用户中心
+   * 成功提示
+   */
+  userStore.setUser(data)
+  router.replace(userStore.returnUrl || '/user')
+  Toast.success('登录成功')
+  userStore.setReturnUrl('')
+}
 const { form, send, time } = useSendMobileCode(mobile, 'bindMobile')
 </script>
 
