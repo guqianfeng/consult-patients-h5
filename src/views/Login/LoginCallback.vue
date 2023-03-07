@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useSendMobileCode } from '@/composable'
 import { loginByQQ } from '@/services/user'
+import { codeRules, mobileRules } from '@/utils/rules'
 import { onMounted, ref } from 'vue'
 
 const openIdRef = ref('')
@@ -33,19 +35,35 @@ onMounted(() => {
     })
   }
 })
+const mobile = ref('')
+const code = ref('')
+const bind = () => {}
+const { form, send, time } = useSendMobileCode(mobile, 'bindMobile')
 </script>
 
 <template>
   <div class="login-page" v-if="!isBind">
-    <cp-nav-bar placeholder title="绑定手机号"></cp-nav-bar>
+    <cp-nav-bar title="绑定手机号"></cp-nav-bar>
     <div class="login-head">
       <h3>手机绑定</h3>
     </div>
-    <van-form autocomplete="off" ref="form">
-      <van-field name="mobile" placeholder="请输入手机号"></van-field>
-      <van-field name="code" placeholder="请输入验证码">
+    <van-form autocomplete="off" ref="form" @submit="bind">
+      <van-field
+        name="mobile"
+        placeholder="请输入手机号"
+        v-model="mobile"
+        :rules="mobileRules"
+      ></van-field>
+      <van-field
+        name="code"
+        placeholder="请输入验证码"
+        v-model="code"
+        :rules="codeRules"
+      >
         <template #button>
-          <span class="btn-send">发送验证码</span>
+          <span class="btn-send" @click="send">{{
+            time <= 0 ? '发送验证码' : `${time}s后在发送`
+          }}</span>
         </template>
       </van-field>
       <div class="cp-cell">
@@ -57,4 +75,6 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@import '@/styles/login.scss';
+</style>

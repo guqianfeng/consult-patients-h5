@@ -6,10 +6,12 @@ import {
   getPrescriptionPic
 } from '@/services/consult'
 import { getMedicalOrderDetail } from '@/services/order'
+import { sendMobileCode } from '@/services/user'
 import type { ConsultOrderItem, FollowType } from '@/types/consult'
 import type { OrderDetail } from '@/types/order'
-import { ImagePreview, Toast } from 'vant'
-import { onMounted, ref } from 'vue'
+import type { CodeType } from '@/types/user'
+import { ImagePreview, Toast, type FormInstance } from 'vant'
+import { onMounted, onUnmounted, ref, type Ref } from 'vue'
 
 export const useFollow = (type: FollowType = 'doc') => {
   const loading = ref(false)
@@ -84,5 +86,33 @@ export function useOrderDetail(id: string) {
   })
   return {
     order
+  }
+}
+export function useSendMobileCode(
+  mobile: Ref<string>,
+  type: CodeType = 'login'
+) {
+  const time = ref(0)
+  let timerId: number
+  const form = ref<FormInstance>()
+  const send = async () => {
+    if (time.value > 0) return
+    await form.value?.validate('mobile')
+    await sendMobileCode(mobile.value, type)
+    Toast.success('发送成功')
+    time.value = 60
+    timerId && window.clearInterval(timerId)
+    timerId = window.setInterval(() => {
+      time.value--
+      if (time.value <= 0) window.clearInterval(timerId)
+    }, 1000)
+  }
+  onUnmounted(() => {
+    window.clearInterval(timerId)
+  })
+  return {
+    form,
+    time,
+    send
   }
 }
