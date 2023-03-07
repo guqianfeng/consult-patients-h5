@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  fetch('/patient/message/list').then(async (response) => {
+    console.log(await response.json())
+  })
+})
+</script>
 
 <template>
   <div class="notify-page">
