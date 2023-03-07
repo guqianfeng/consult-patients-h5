@@ -149,7 +149,7 @@ const handleBeforeClose = () => {
       :orderId="orderId"
       :actual-payment="payInfo.actualPayment"
       :on-close="handleBeforeClose"
-      :payCallback="'http://localhost:5173/room'"
+      :payCallback="'/room'"
     >
     </cp-pay-sheet>
   </div>
