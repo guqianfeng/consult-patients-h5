@@ -21,7 +21,10 @@
     });
   </script> -->
   <script type="module" src="/src/main.ts"></script>
-
+  <% if(DEV){ %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/eruda/2.4.1/eruda.min.js"></script>
+    <script>eruda.init()</script>
+    <% } %>
 </body>
 
 </html>
